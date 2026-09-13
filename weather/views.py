@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .services import WeatherService
+from .services import WeatherService, GeocodingService
 
 # Create your views here.
 
@@ -22,3 +22,13 @@ class WeatherAPIView(APIView):
         weather=WeatherService.get_weather(latitude=latitude, longitude=longitude)
 
         return Response(weather)
+
+class CitySearchAPIView(APIView):
+    def get(self, request):
+        name=request.query_params.get("name")
+
+        if not name:
+            return Response({"error": "City name is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        results=GeocodingService.search_city(name)
+        return Response({"results": results})

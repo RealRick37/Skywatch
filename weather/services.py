@@ -141,3 +141,40 @@ class WeatherService:
         }
 
         return conditions.get(weather_code, "Unknown")
+
+
+
+class GeocodingService:
+    BASE_URL="https://geocoding-api.open-meteo.com/v1/search"
+
+    @classmethod
+    def search_city(cls, name):
+        params={
+            "name": name,
+            "count": 5,
+            "language": "en",
+            "format": "json",
+        }
+
+        response=httpx.get(cls.BASE_URL, params=params, timeout=10.0)
+        response.raise_for_status()
+        data=response.json()
+
+        return data.get("results", [])
+
+    @staticmethod
+    def _normalize_results(results):
+        return [
+            {
+                "id": result["id"],
+                "name": result["name"],
+                "latitude": result["latitude"],
+                "longitude": result["longitude"],
+                "country": result["country"],
+                "country_code": result["country_code"],
+                "admin1": result.get("admin1"),
+                "timezone": result["timezone"],
+                "population": result.get("population"),
+            }
+            for result in results
+        ]
