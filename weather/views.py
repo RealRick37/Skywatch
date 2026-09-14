@@ -16,16 +16,21 @@ class WeatherAPIView(APIView):
         try:
             latitude=float(latitude)
             longitude=float(longitude)
-        except ValueError, TypeError:
+        except (ValueError, TypeError):
             return Response({"error": "latitude and longitude must be valid numbers."}, status=status.HTTP_401_UNAUTHORIZED)
 
         if not -90 <= latitude <= 90:
-            return Response({"error": "latitude must be between -90 andf 90."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "latitude must be between -90 and 90."}, status=status.HTTP_400_BAD_REQUEST)
 
         if not -180 <= longitude <= 180:
-            return Response({"error": "longitude must be between -180 andf 180."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "longitude must be between -180 and 180."}, status=status.HTTP_400_BAD_REQUEST)
 
-        weather=WeatherService.get_weather(latitude=latitude, longitude=longitude)
+        try:
+            weather=WeatherService.get_weather(latitude=latitude, longitude=longitude)
+
+        except RuntimeError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
 
         return Response(weather)
 
@@ -36,5 +41,9 @@ class CitySearchAPIView(APIView):
         if not name:
             return Response({"error": "City name is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        results=GeocodingService.search_city(name)
+        try:
+            results=GeocodingService.search_city(name)
+        except RuntimeError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
         return Response({"results": results})

@@ -41,10 +41,14 @@ class WeatherService:
             "timezone": "auto",
             "forecast_days": 7,
         }
-
-        response=httpx.get(cls.BASE_URL, params=params, timeout=10.0)
-
-        response.raise_for_status()
+        try:
+            response=httpx.get(cls.BASE_URL, params=params, timeout=10.0)
+            response.raise_for_status()
+        except httpx.RequestError as exc:
+            raise RuntimeError("Weather service is unavailable.") from exc
+        except httpx.HTTPStatusError as exc:
+            raise RuntimeError("Weather service returned an error.") from exc
+        
         data=response.json()
         return cls._normalize_response(data)
 
@@ -156,8 +160,14 @@ class GeocodingService:
             "format": "json",
         }
 
-        response=httpx.get(cls.BASE_URL, params=params, timeout=10.0)
-        response.raise_for_status()
+        try:
+            response=httpx.get(cls.BASE_URL, params=params, timeout=10.0)
+            response.raise_for_status()
+        except httpx.RequestError as exc:
+            raise RuntimeError("Geocoding service is unavailable.") from exc
+        except httpx.HTTPStatusError as exc:
+            raise RuntimeError("Geocoding service returned an error.") from exc
+
         data=response.json()
 
         return cls._normalize_results(data.get("results", []))
