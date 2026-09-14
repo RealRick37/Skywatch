@@ -16,8 +16,14 @@ class WeatherAPIView(APIView):
         try:
             latitude=float(latitude)
             longitude=float(longitude)
-        except ValueError:
+        except ValueError, TypeError:
             return Response({"error": "latitude and longitude must be valid numbers."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if not -90 <= latitude <= 90:
+            return Response({"error": "latitude must be between -90 andf 90."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not -180 <= longitude <= 180:
+            return Response({"error": "longitude must be between -180 andf 180."}, status=status.HTTP_400_BAD_REQUEST)
 
         weather=WeatherService.get_weather(latitude=latitude, longitude=longitude)
 
@@ -25,7 +31,7 @@ class WeatherAPIView(APIView):
 
 class CitySearchAPIView(APIView):
     def get(self, request):
-        name=request.query_params.get("name")
+        name=request.query_params.get("name", "").strip()
 
         if not name:
             return Response({"error": "City name is required."}, status=status.HTTP_400_BAD_REQUEST)

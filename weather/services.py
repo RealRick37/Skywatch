@@ -160,7 +160,7 @@ class GeocodingService:
         response.raise_for_status()
         data=response.json()
 
-        return data.get("results", [])
+        return cls._normalize_results(data.get("results", []))
 
     @staticmethod
     def _normalize_results(results):
