@@ -1,7 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .services import WeatherService, GeocodingService
+from .serializers import FavoriteLocationSerializer
+from .models import FavoriteLocation
 
 # Create your views here.
 
@@ -47,3 +50,43 @@ class CitySearchAPIView(APIView):
             return Response({"error": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         return Response({"results": results})
+
+
+class FavoriteLocationAPIView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self, request):
+        favorites=FavoriteLocation.objects.filter(user=request.user).order_by("-created_at")
+        serializer=FavoriteLocationSerializer(favorites, many=True)
+
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer=FavoriteLocationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class FavoriteLocationDetailAPIView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self, request, pk):
+        try:
+            favorite=FavoriteLocation.objects.get(pk=pk, user=request.user)
+        except FavoriteLocation.DoesNotExist:
+            return Response({"error": "Favorite location not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer=FavoriteLocationSerializer(favorite)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        try:
+            favorite=FavoriteLocation.objects.get(pk=pk, user=request.user)
+        except FavoriteLocation.DoesNotExist:
+            return Response({"error": "Favorite location not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        favorite.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
