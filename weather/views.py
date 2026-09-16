@@ -51,6 +51,33 @@ class CitySearchAPIView(APIView):
 
         return Response({"results": results})
 
+class CityWeatherAPIView(APIView):
+    def get(self, request):
+        name=request.query_params.get("name", "").strip()
+
+        if not name:
+            return Response({"error": "City name is required."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            cities=GeocodingService.search_city(name)
+        except RuntimeError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        if not cities:
+            return Response({"error": "City not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        city=cities[0]
+
+        try:
+            weather=WeatherService.get_weather(latitude=city["latitude"], longitude=city["longitude"])
+        except RuntimeError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        weather["location"]["name"]=city["name"]
+        weather["location"]["country"]=city["country"]
+        weather["location"]["country_code"]=city["country_code"]
+
+        return Response(weather)
+
 
 class FavoriteLocationAPIView(APIView):
     permission_classes=[IsAuthenticated]
