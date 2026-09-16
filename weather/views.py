@@ -89,7 +89,7 @@ class FavoriteLocationAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer=FavoriteLocationSerializer(data=request.data)
+        serializer=FavoriteLocationSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user)
 
