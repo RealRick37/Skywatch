@@ -14,13 +14,13 @@ class WeatherAPIView(APIView):
         longitude=request.query_params.get("longitude")
 
         if latitude is None or longitude is None:
-            return Response({"error": "latitude and longitude are required."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error": "latitude and longitude are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             latitude=float(latitude)
             longitude=float(longitude)
         except (ValueError, TypeError):
-            return Response({"error": "latitude and longitude must be valid numbers."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error": "latitude and longitude must be valid numbers."}, status=status.HTTP_400_BAD_REQUEST)
 
         if not -90 <= latitude <= 90:
             return Response({"error": "latitude must be between -90 and 90."}, status=status.HTTP_400_BAD_REQUEST)
