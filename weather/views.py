@@ -117,3 +117,29 @@ class FavoriteLocationDetailAPIView(APIView):
         favorite.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class FavoriteLocationsWeatherAPIView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self, request):
+        favorites=FavoriteLocation.objects.filter(user=request.user).order_by("-created_at")
+
+        results=[]
+
+        for favorite in favorites:
+            try:
+                weather=WeatherService.get_weather(latitude=favorite.latitude, longitude=favorite.longitude)
+            except RuntimeError as exc:
+                return Response({"error": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+            results.append({
+                "id": favorite.id,
+                "name": favorite.name,
+                "country": favorite.country,
+                "latitude": favorite.latitude,
+                "longitude": favorite.longitude,
+                "weather": weather["current"],
+                "units": weather["units"],
+            })
+
+        return Response({"results": results})
