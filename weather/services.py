@@ -40,6 +40,9 @@ class WeatherService:
             ]),
             "timezone": "auto",
             "forecast_days": 7,
+            "temperature_unit": "celsius",
+            "wind_speed_unit": "kmh",
+            "precipitation_unit": "mm",
         }
         try:
             response=httpx.get(cls.BASE_URL, params=params, timeout=10.0)
@@ -87,11 +90,22 @@ class WeatherService:
             for i in range(len(daily_data["time"]))
         ]
 
+        current_units=data["current_units"]
+
         return {
             "location": {
                 "latitude": data["latitude"],
                 "longitude": data["longitude"],
                 "timezone": data["timezone"],
+            },
+            "units": {
+                "temperature": current_units["temperature_2m"],
+                "feels_like": current_units["apparent_temperature"],
+                "humidity": current_units["relative_humidity_2m"],
+                "wind_speed": current_units["wind_speed_10m"],
+                "pressure": current_units["pressure_msl"],
+                "visibility": current_units["visibility"],
+                "precipitation": current_units["precipitation"],
             },
             "current": {
                 "time": data["current"]["time"],
