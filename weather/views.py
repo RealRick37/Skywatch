@@ -5,10 +5,13 @@ from rest_framework import status
 from .services import WeatherService, GeocodingService
 from .serializers import FavoriteLocationSerializer
 from .models import FavoriteLocation
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 # Create your views here.
 
 class WeatherAPIView(APIView):
+    @extend_schema(summary="Get weather by coordinates", description="Returns current weather, hourly forecast, and 7-day forecast for the given coordinates.", parameters=[OpenApiParameter(name="latitude", type=float, required=True, description="Latitude between -90 and 90."), OpenApiParameter(name="longitude", type=float, required=True,description="Longitude between -180 and 180.")])
+
     def get(self, request):
         latitude=request.query_params.get("latitude")
         longitude=request.query_params.get("longitude")
@@ -38,6 +41,9 @@ class WeatherAPIView(APIView):
         return Response(weather)
 
 class CitySearchAPIView(APIView):
+    @extend_schema(summary="Search for cities", description="Searches for cities by name.", 
+    parameters=[OpenApiParameter(name="name", type=str, required=True, description="City name to search for.")])
+
     def get(self, request):
         name=request.query_params.get("name", "").strip()
 
@@ -52,6 +58,8 @@ class CitySearchAPIView(APIView):
         return Response({"results": results})
 
 class CityWeatherAPIView(APIView):
+    @extend_schema(summary="Get weather for a city", description="Returns weather information for the first matching city.",parameters=[OpenApiParameter(name="name", type=str, required=True, description="City name.")])
+
     def get(self, request):
         name=request.query_params.get("name", "").strip()
 
@@ -82,11 +90,16 @@ class CityWeatherAPIView(APIView):
 class FavoriteLocationAPIView(APIView):
     permission_classes=[IsAuthenticated]
 
+    @extend_schema(summary="List favorite locations",description="Returns all favorite locations belonging to the authenticated user.", responses=FavoriteLocationSerializer(many=True))
+
     def get(self, request):
         favorites=FavoriteLocation.objects.filter(user=request.user).order_by("-created_at")
         serializer=FavoriteLocationSerializer(favorites, many=True)
 
         return Response(serializer.data)
+
+    @extend_schema(summary="Add a favorite location", description="Adds a new location to the authenticated user's favorites.",
+        request=FavoriteLocationSerializer, responses={201: FavoriteLocationSerializer})
 
     def post(self, request):
         serializer=FavoriteLocationSerializer(data=request.data, context={"request": request})
@@ -98,6 +111,10 @@ class FavoriteLocationAPIView(APIView):
 class FavoriteLocationDetailAPIView(APIView):
     permission_classes=[IsAuthenticated]
 
+    @extend_schema(summary="Get a favorite location", description="Returns a specific favorite location belonging to the authenticated user.", parameters=[OpenApiParameter(name="pk", type=int, location=OpenApiParameter.PATH, required=True,
+            description="ID of the favorite location.")], responses={200: FavoriteLocationSerializer,
+            404: {"description": "Favorite location not found."}})
+
     def get(self, request, pk):
         try:
             favorite=FavoriteLocation.objects.get(pk=pk, user=request.user)
@@ -107,6 +124,10 @@ class FavoriteLocationDetailAPIView(APIView):
         serializer=FavoriteLocationSerializer(favorite)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(summary="Delete a favorite location", description="Deletes a specific favorite location belonging to the authenticated user.", parameters=[OpenApiParameter(name="pk", type=int, location=OpenApiParameter.PATH, required=True,
+                description="ID of the favorite location.")],
+        responses={204: None, 404: {"description": "Favorite location not found."}})
 
     def delete(self, request, pk):
         try:
@@ -120,6 +141,11 @@ class FavoriteLocationDetailAPIView(APIView):
 
 class FavoriteLocationsWeatherAPIView(APIView):
     permission_classes=[IsAuthenticated]
+
+    @extend_schema(summary="Get weather for favorite locations", description="Returns current weather for all favorite locations belonging to the authenticated user.",
+        responses={200: {"type": "object", "properties": {"results": {"type": "array", "items": {"type": "object"}}}},
+            503: {"description": "Weather service is unavailable."}})
+
 
     def get(self, request):
         favorites=FavoriteLocation.objects.filter(user=request.user).order_by("-created_at")
