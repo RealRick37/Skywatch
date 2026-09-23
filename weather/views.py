@@ -143,8 +143,7 @@ class FavoriteLocationsWeatherAPIView(APIView):
     permission_classes=[IsAuthenticated]
 
     @extend_schema(summary="Get weather for favorite locations", description="Returns current weather for all favorite locations belonging to the authenticated user.",
-        responses={200: {"type": "object", "properties": {"results": {"type": "array", "items": {"type": "object"}}}},
-            503: {"description": "Weather service is unavailable."}})
+        responses={200: {"type": "object", "properties": {"results": {"type": "array", "items": {"type": "object"}}}}})
 
 
     def get(self, request):
@@ -155,17 +154,24 @@ class FavoriteLocationsWeatherAPIView(APIView):
         for favorite in favorites:
             try:
                 weather=WeatherService.get_weather(latitude=favorite.latitude, longitude=favorite.longitude)
+                results.append({
+                                "id": favorite.id,
+                                "name": favorite.name,
+                                "country": favorite.country,
+                                "latitude": favorite.latitude,
+                                "longitude": favorite.longitude,
+                                "weather": weather["current"],
+                                "units": weather["units"],
+                            })
+            
             except RuntimeError as exc:
-                return Response({"error": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
-            results.append({
+                results.append({
                 "id": favorite.id,
                 "name": favorite.name,
                 "country": favorite.country,
                 "latitude": favorite.latitude,
                 "longitude": favorite.longitude,
-                "weather": weather["current"],
-                "units": weather["units"],
+                "error": str(exc),
             })
 
         return Response({"results": results})
