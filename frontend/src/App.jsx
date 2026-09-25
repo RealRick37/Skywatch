@@ -1,12 +1,17 @@
 import './App.css'
-
+import Navbar from "./components/layout/Navbar";
 
 function App() {
   return (
-    <main>
-      <h1>Skywatch</h1>
-    </main>
+    <>
+      <Navbar />
+
+      <main>
+        <h1>Skywatch</h1>
+      </main>
+    </>
   );
 }
+
 
 export default App;
