@@ -1,17 +1,19 @@
 import './App.css'
 import Navbar from "./components/layout/Navbar";
 import WeatherHero from "./components/weather/WeatherHero";
+import HourlyForecast from "./components/weather/HourlyForecast";
 import SkyBackground from "./components/background/SkyBackground";
 
 function App() {
   return (
     <>
-      <SkyBackground condition="clear"  />
+      <SkyBackground condition="clear" />
 
       <Navbar />
 
       <main>
         <WeatherHero />
+        <HourlyForecast />
       </main>
     </>
   );
