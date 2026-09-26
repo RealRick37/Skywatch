@@ -131,3 +131,271 @@ img {
   border-color: rgba(255, 255, 255, 0.16);
   color: var(--color-text-primary);
 }
+
+.weather-hero {
+  max-width: var(--container-width);
+  margin: 70px auto 0;
+  padding: 0 32px 60px;
+
+  text-align: center;
+}
+
+.weather-hero__location {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+
+.weather-hero__location svg {
+  color: var(--color-accent);
+}
+
+.weather-hero__main {
+  margin-top: 28px;
+}
+
+.weather-hero__temperature {
+  font-size: clamp(6rem, 15vw, 10rem);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.08em;
+
+  background: linear-gradient(
+    180deg,
+    var(--color-text-primary) 0%,
+    var(--color-text-secondary) 100%
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.weather-hero__condition {
+  margin-top: 22px;
+
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.weather-hero__feels {
+  margin-top: 8px;
+
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.weather-hero__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+
+  margin-top: 55px;
+}
+
+.weather-stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 18px;
+
+  text-align: left;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+  backdrop-filter: blur(var(--blur-glass));
+
+  box-shadow: var(--shadow-card);
+
+  transition:
+    transform var(--transition-normal),
+    background var(--transition-normal),
+    border-color var(--transition-normal);
+}
+
+.weather-stat:hover {
+  transform: translateY(-3px);
+  background: var(--color-surface-hover);
+  border-color: rgba(114, 214, 255, 0.2);
+}
+
+.weather-stat__icon {
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.weather-stat__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.weather-stat__label {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.weather-stat__value {
+  display: block;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.sky-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 10%,
+      rgba(45, 125, 190, 0.18),
+      transparent 35%
+    ),
+    var(--color-bg-primary);
+
+  transition:
+    background 1s ease,
+    opacity 1s ease;
+}
+
+.sky-background__glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(90px);
+  opacity: 0.5;
+}
+
+.sky-background__glow--one {
+  width: 500px;
+  height: 500px;
+
+  top: -180px;
+  left: -120px;
+
+  background: rgba(67, 180, 255, 0.16);
+
+  animation: sky-drift-one 14s ease-in-out infinite alternate;
+}
+
+.sky-background__glow--two {
+  width: 420px;
+  height: 420px;
+
+  right: -100px;
+  bottom: -140px;
+
+  background: rgba(116, 74, 255, 0.12);
+
+  animation: sky-drift-two 18s ease-in-out infinite alternate;
+}
+
+.sky-background__orb {
+  position: absolute;
+
+  width: 260px;
+  height: 260px;
+
+  top: 18%;
+  right: 15%;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  filter: blur(2px);
+
+  animation: sky-orb 12s ease-in-out infinite alternate;
+}
+
+
+.sky-background--clear {
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(255, 205, 100, 0.1),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(45, 140, 255, 0.12),
+      transparent 30%
+    ),
+    var(--color-bg-primary);
+}
+
+
+.sky-background--night {
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(101, 83, 255, 0.14),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(25, 90, 170, 0.12),
+      transparent 35%
+    ),
+    #040a14;
+}
+
+@keyframes sky-drift-one {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(80px, 40px, 0) scale(1.15);
+  }
+}
+
+@keyframes sky-drift-two {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(-60px, -50px, 0) scale(1.1);
+  }
+}
+
+@keyframes sky-orb {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-40px, 30px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-background__glow,
+  .sky-background__orb {
+    animation: none;
+  }
+}
