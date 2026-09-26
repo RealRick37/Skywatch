@@ -1,4 +1,5 @@
 import {Droplets, Eye, Gauge, MapPin, Wind} from "lucide-react";
+import RevealText from "../ui/RevealText";
 
 const weatherData={
     city: "Tehran",
@@ -16,25 +17,37 @@ function WeatherHero() {
   return (
     <section className="weather-hero">
       <div className="weather-hero__location">
-        <MapPin size={18} />
-        <span>
-          {weatherData.city}, {weatherData.country}
-        </span>
-      </div>
+        <RevealText delay={100}>
+            <MapPin size={18} />
+        </RevealText>
 
-      <div className="weather-hero__main">
-        <div className="weather-hero__temperature">
-          {weatherData.temperature}°
+        <RevealText delay={150}>
+            {weatherData.city}, {weatherData.country}
+        </RevealText>
         </div>
 
-        <div className="weather-hero__condition">
-          {weatherData.condition}
-        </div>
+        <div className="weather-hero__main">
+        <RevealText
+            className="weather-hero__temperature"
+            delay={250}
+        >
+            {weatherData.temperature}°
+        </RevealText>
 
-        <div className="weather-hero__feels">
-          Feels like {weatherData.feelsLike}°
+        <RevealText
+            className="weather-hero__condition"
+            delay={400}
+        >
+            {weatherData.condition}
+        </RevealText>
+
+        <RevealText
+            className="weather-hero__feels"
+            delay={500}
+        >
+            Feels like {weatherData.feelsLike}°
+        </RevealText>
         </div>
-      </div>
 
       <div className="weather-hero__stats">
         <WeatherStat

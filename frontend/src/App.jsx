@@ -6,7 +6,7 @@ import SkyBackground from "./components/background/SkyBackground";
 function App() {
   return (
     <>
-      <SkyBackground condition="clear" />
+      <SkyBackground condition="clear"  />
 
       <Navbar />
 

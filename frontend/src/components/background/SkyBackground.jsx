@@ -1,17 +1,18 @@
 function SkyBackground({ condition = "clear", isNight = false }) {
-  const backgroundClass = [
+  const classes = [
     "sky-background",
     `sky-background--${condition}`,
-    isNight ? "sky-background--night" : "",
+    isNight && "sky-background--night",
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <div className={backgroundClass} aria-hidden="true">
-      <div className="sky-background__glow sky-background__glow--one" />
-      <div className="sky-background__glow sky-background__glow--two" />
-      <div className="sky-background__orb" />
+    <div className={classes} aria-hidden="true">
+      <div className="sky-background__mesh" />
+      <div className="sky-background__orb sky-background__orb--one" />
+      <div className="sky-background__orb sky-background__orb--two" />
+      <div className="sky-background__noise" />
     </div>
   );
 }
