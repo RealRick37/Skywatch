@@ -706,3 +706,122 @@ img {
     padding-right: 20px;
   }
 }
+
+.daily-forecast {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 32px 100px;
+}
+
+.daily-forecast__header {
+  margin-bottom: 18px;
+}
+
+.daily-forecast__eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.daily-forecast__header h2 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.daily-forecast__list {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.daily-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  backdrop-filter: blur(var(--blur-glass));
+
+  transition:
+    transform var(--transition-normal),
+    background var(--transition-normal),
+    border-color var(--transition-normal);
+}
+
+.daily-card:hover {
+  transform: translateY(-4px);
+  background: var(--color-surface-hover);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.daily-card--active {
+  background: var(--color-accent-soft);
+  border-color: rgba(114, 214, 255, 0.3);
+}
+
+.daily-card__day {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+}
+
+.daily-card--active .daily-card__day {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.daily-card__icon {
+  margin: 18px 0;
+}
+
+.daily-card__icon svg {
+  width: 26px;
+  height: 26px;
+  stroke-width: 1.6;
+}
+
+.daily-card__temperatures {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.9rem;
+}
+
+.daily-card__temperatures strong {
+  font-weight: 600;
+}
+
+.daily-card__temperatures span {
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 900px) {
+  .daily-forecast__list {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+
+  .daily-forecast__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .daily-card {
+    width: 90px;
+    flex: 0 0 90px;
+  }
+}
+
+@media (max-width: 600px) {
+  .daily-forecast {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
