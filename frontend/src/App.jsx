@@ -2,6 +2,7 @@ import './App.css'
 import Navbar from "./components/layout/Navbar";
 import WeatherHero from "./components/weather/WeatherHero";
 import HourlyForecast from "./components/weather/HourlyForecast";
+import DailyForecast from "./components/weather/DailyForecast";
 import SkyBackground from "./components/background/SkyBackground";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <main>
         <WeatherHero />
         <HourlyForecast />
+        <DailyForecast />
       </main>
     </>
   );
