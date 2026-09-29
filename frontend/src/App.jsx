@@ -10,6 +10,16 @@ import { getWeather } from "./services/weather";
 
 
 function App() {
+   useEffect(() => {
+    getWeather(35.6892, 51.3890)
+      .then((response) => {
+        console.log("Weather API response:", response.data);
+      })
+      .catch((error) => {
+        console.error("Weather API error:", error);
+      });
+  }, []);
+
   return (
     <>
       <SkyBackground condition="clear" />
