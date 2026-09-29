@@ -1,4 +1,5 @@
 import './App.css'
+import { useEffect } from "react";
 import Navbar from "./components/layout/Navbar";
 import WeatherHero from "./components/weather/WeatherHero";
 import HourlyForecast from "./components/weather/HourlyForecast";
@@ -7,7 +8,6 @@ import WeatherDetails from './components/weather/WeatherDetails';
 import SkyBackground from "./components/background/SkyBackground";
 import { getWeather } from "./services/weather";
 
-console.log(getWeather);
 
 function App() {
   return (
