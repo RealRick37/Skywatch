@@ -1,77 +1,67 @@
-import {Droplets, Eye, Gauge, MapPin, Wind} from "lucide-react";
+import { Droplets, Eye, Gauge, MapPin, Wind } from "lucide-react";
 import RevealText from "../ui/RevealText";
 
-const weatherData={
-    city: "Tehran",
-    country: "Iran",
-    temperature: 24,
-    feelsLike: 25,
-    condition: "Clear sky",
-    humidity: 42,
-    wind: 12,
-    pressure: 1014,
-    visibility: 10000,
-};
+function WeatherHero({ weather }) {
+  const { location, current, units } = weather;
 
-function WeatherHero() {
   return (
     <section className="weather-hero">
       <div className="weather-hero__location">
         <RevealText delay={100}>
-            <MapPin size={18} />
+          <MapPin size={18} />
         </RevealText>
 
         <RevealText delay={150}>
-            {weatherData.city}, {weatherData.country}
+          {location.name ?? location.timezone}
         </RevealText>
-        </div>
+      </div>
 
-        <div className="weather-hero__main">
+      <div className="weather-hero__main">
         <RevealText
-            className="weather-hero__temperature"
-            delay={250}
+          className="weather-hero__temperature"
+          delay={250}
         >
-            {weatherData.temperature}°
-        </RevealText>
-
-        <RevealText
-            className="weather-hero__condition"
-            delay={400}
-        >
-            {weatherData.condition}
+          {Math.round(current.temperature)}°
         </RevealText>
 
         <RevealText
-            className="weather-hero__feels"
-            delay={500}
+          className="weather-hero__condition"
+          delay={400}
         >
-            Feels like {weatherData.feelsLike}°
+          {current.condition}
         </RevealText>
-        </div>
+
+        <RevealText
+          className="weather-hero__feels"
+          delay={500}
+        >
+          Feels like {Math.round(current.feels_like)}°
+        </RevealText>
+      </div>
 
       <div className="weather-hero__stats">
         <WeatherStat
           icon={<Droplets />}
           label="Humidity"
-          value={`${weatherData.humidity}%`}
+          value={`${current.humidity}%`}
         />
 
         <WeatherStat
           icon={<Wind />}
           label="Wind"
-          value={`${weatherData.wind} km/h`}
+          value={`${Math.round(current.wind_speed)} ${units.wind_speed}`}
         />
 
         <WeatherStat
           icon={<Gauge />}
           label="Pressure"
-          value={`${weatherData.pressure} hPa`}
+          value={`${Math.round(current.pressure)} ${units.pressure}`}
         />
 
         <WeatherStat
           icon={<Eye />}
           label="Visibility"
-          value={`${weatherData.visibility / 1000} km`}
+          value={`${(current.visibility / 1000).toFixed(1)} km`}
         />
       </div>
     </section>

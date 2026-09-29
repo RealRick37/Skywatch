@@ -1,5 +1,5 @@
 import './App.css'
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./components/layout/Navbar";
 import WeatherHero from "./components/weather/WeatherHero";
 import HourlyForecast from "./components/weather/HourlyForecast";
@@ -10,15 +10,33 @@ import { getWeather } from "./services/weather";
 
 
 function App() {
+  const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
    useEffect(() => {
     getWeather(35.6892, 51.3890)
       .then((response) => {
-        console.log("Weather API response:", response.data);
+        console.log(response.data);
+        setWeather(response.data);
       })
       .catch((error) => {
         console.error("Weather API error:", error);
+        setError("Failed to load weather data.");
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
+
+  if (loading) {
+    return <div>Loading weather...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
 
   return (
     <>
@@ -27,10 +45,10 @@ function App() {
       <Navbar />
 
       <main>
-        <WeatherHero />
-        <HourlyForecast />
-        <DailyForecast />
-        <WeatherDetails />
+        <WeatherHero weather={weather} />
+        <HourlyForecast weather={weather} />
+        <DailyForecast weather={weather} />
+        <WeatherDetails weather={weather} />
       </main>
     </>
   );
