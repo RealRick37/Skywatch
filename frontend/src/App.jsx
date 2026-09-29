@@ -5,6 +5,9 @@ import HourlyForecast from "./components/weather/HourlyForecast";
 import DailyForecast from "./components/weather/DailyForecast";
 import WeatherDetails from './components/weather/WeatherDetails';
 import SkyBackground from "./components/background/SkyBackground";
+import { getWeather } from "./services/weather";
+
+console.log(getWeather);
 
 function App() {
   return (
