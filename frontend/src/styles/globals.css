@@ -843,3 +843,117 @@ img {
     flex-wrap: wrap;
   }
 }
+
+.navbar__search-wrapper {
+  position: relative;
+}
+
+.navbar__search-form {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 280px;
+  padding: 10px 12px 10px 15px;
+  border: 1px solid rgba(114, 214, 255, 0.25);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  backdrop-filter: blur(var(--blur-glass));
+  color: var(--color-text-secondary);
+}
+
+.navbar__search-form input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+.navbar__search-form input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.navbar__search-form button {
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.navbar__search-form button:hover {
+  color: var(--color-text-primary);
+}
+
+.navbar__search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgba(10, 22, 38, 0.92);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-card);
+}
+
+.navbar__search-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 13px 14px;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.navbar__search-result:last-child {
+  border-bottom: none;
+}
+
+.navbar__search-result:hover {
+  background: var(--color-surface-hover);
+}
+
+.navbar__search-result svg {
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
+.navbar__search-result-main {
+  min-width: 0;
+}
+
+.navbar__search-result-main strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.navbar__search-result-main span {
+  display: block;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navbar__search-status {
+  padding: 15px;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}

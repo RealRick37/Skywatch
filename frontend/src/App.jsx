@@ -6,17 +6,29 @@ import HourlyForecast from "./components/weather/HourlyForecast";
 import DailyForecast from "./components/weather/DailyForecast";
 import WeatherDetails from './components/weather/WeatherDetails';
 import SkyBackground from "./components/background/SkyBackground";
-import { getWeather } from "./services/weather";
+import { getWeather, searchCity } from "./services/weather";
 
 
 function App() {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
 
-  const handleSearch = (city) => {
-  console.log("Searching for:", city);
-  };
+  const handleSearch = async (city) => {
+  setSearchLoading(true);
+
+  try {
+    const response = await searchCity(city);
+    setSearchResults(response.data.results);
+  } catch (error) {
+    console.error("City search error:", error);
+    setSearchResults([]);
+  } finally {
+    setSearchLoading(false);
+  }
+};
 
    useEffect(() => {
     getWeather(35.6892, 51.3890)
@@ -46,7 +58,7 @@ function App() {
     <>
       <SkyBackground condition="clear" />
 
-      <Navbar onSearch={handleSearch} />
+      <Navbar onSearch={handleSearch} searchResults={searchResults} searchLoading={searchLoading} />
 
       <main>
         <WeatherHero weather={weather} />
