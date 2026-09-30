@@ -14,6 +14,10 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const handleSearch = (city) => {
+  console.log("Searching for:", city);
+  };
+
    useEffect(() => {
     getWeather(35.6892, 51.3890)
       .then((response) => {
@@ -42,7 +46,7 @@ function App() {
     <>
       <SkyBackground condition="clear" />
 
-      <Navbar />
+      <Navbar onSearch={handleSearch} />
 
       <main>
         <WeatherHero weather={weather} />
