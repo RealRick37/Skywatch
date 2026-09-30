@@ -1,80 +1,74 @@
 import {CloudRain, Droplets, Eye, Gauge, Sun, Sunrise, Sunset, Wind} from "lucide-react";
 
-const weatherDetails = {
-  uvIndex: 4,
-  precipitation: 0,
-  humidity: 42,
-  wind: 12,
-  visibility: 10,
-  pressure: 1014,
-  sunrise: "05:42",
-  sunset: "19:18",
-};
+function WeatherDetails({ weather }) {
+  const { current, daily, units } = weather;
 
-function WeatherDetails() {
+  const today = daily[0];
+
   return (
     <section className="weather-details">
       <div className="weather-details__header">
         <span className="weather-details__eyebrow">
           Conditions
         </span>
-
         <h2>Weather details</h2>
       </div>
 
       <div className="weather-details__grid">
         <div className="weather-detail weather-detail--sun">
           <div className="weather-detail__icon">
-            <Sun />
+            <Sunrise />
           </div>
 
           <div className="weather-detail__content">
             <span>Sunrise</span>
-            <strong>{weatherDetails.sunrise}</strong>
+            <strong>{formatTime(today.sunrise)}</strong>
           </div>
 
-          <Sunset className="weather-detail__secondary-icon" />
+          <div className="weather-detail__icon">
+            <Sunset />
+          </div>
 
           <div className="weather-detail__content">
             <span>Sunset</span>
-            <strong>{weatherDetails.sunset}</strong>
+            <strong>{formatTime(today.sunset)}</strong>
           </div>
         </div>
 
         <WeatherDetailCard
           icon={<Sun />}
           label="UV Index"
-          value={weatherDetails.uvIndex}
+          value={current.uv_index}
         />
 
         <WeatherDetailCard
           icon={<CloudRain />}
           label="Precipitation"
-          value={`${weatherDetails.precipitation}%`}
+          value={`${current.precipitation} ${units.precipitation}`}
         />
 
         <WeatherDetailCard
           icon={<Droplets />}
           label="Humidity"
-          value={`${weatherDetails.humidity}%`}
+          value={`${current.humidity}${units.humidity}`}
         />
 
         <WeatherDetailCard
           icon={<Wind />}
           label="Wind"
-          value={`${weatherDetails.wind} km/h`}
+          value={`${Math.round(current.wind_speed)} ${units.wind_speed}`}
         />
 
         <WeatherDetailCard
           icon={<Eye />}
           label="Visibility"
-          value={`${weatherDetails.visibility} km`}
+          value={`${(current.visibility / 1000).toFixed(1)} km`}
         />
 
         <WeatherDetailCard
           icon={<Gauge />}
           label="Pressure"
-          value={`${weatherDetails.pressure} hPa`}
+          value={`${Math.round(current.pressure)} ${units.pressure}`}
         />
       </div>
     </section>
@@ -94,6 +88,13 @@ function WeatherDetailCard({ icon, label, value }) {
       </div>
     </div>
   );
+}
+
+function formatTime(time) {
+  return new Date(time).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export default WeatherDetails;
