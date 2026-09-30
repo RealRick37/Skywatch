@@ -1,21 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CloudSun, MapPin, Search, X } from "lucide-react";
 
 function Navbar({onSearch, searchResults, searchLoading}) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
+  useEffect(() => {
     const trimmedQuery = query.trim();
 
     if (!trimmedQuery) {
+      onSearch("");
       return;
     }
 
-    onSearch(trimmedQuery);
-  };
+    const timer = setTimeout(() => {
+      onSearch(trimmedQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query, onSearch]);
 
   const handleClose = () => {
     setIsSearchOpen(false);
@@ -37,10 +40,7 @@ function Navbar({onSearch, searchResults, searchLoading}) {
 
         {isSearchOpen ? (
           <div className="navbar__search-wrapper">
-            <form
-              className="navbar__search-form"
-              onSubmit={handleSubmit}
-            >
+            <div className="navbar__search-form">
               <Search size={18} strokeWidth={2} />
 
               <input
@@ -58,7 +58,7 @@ function Navbar({onSearch, searchResults, searchLoading}) {
               >
                 <X size={18} />
               </button>
-            </form>
+            </div>
 
             {searchLoading && (
               <div className="navbar__search-dropdown">

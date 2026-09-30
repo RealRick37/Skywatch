@@ -1,5 +1,5 @@
 import './App.css'
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Navbar from "./components/layout/Navbar";
 import WeatherHero from "./components/weather/WeatherHero";
 import HourlyForecast from "./components/weather/HourlyForecast";
@@ -16,19 +16,24 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
 
-  const handleSearch = async (city) => {
-  setSearchLoading(true);
+  const handleSearch = useCallback(async (city) => {
+    if (!city) {
+      setSearchResults([]);
+      return;
+    }
 
-  try {
-    const response = await searchCity(city);
-    setSearchResults(response.data.results);
-  } catch (error) {
-    console.error("City search error:", error);
-    setSearchResults([]);
-  } finally {
-    setSearchLoading(false);
-  }
-};
+    setSearchLoading(true);
+
+    try {
+      const response = await searchCity(city);
+      setSearchResults(response.data.results);
+    } catch (error) {
+      console.error("City search error:", error);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  }, []);
 
    useEffect(() => {
     getWeather(35.6892, 51.3890)
