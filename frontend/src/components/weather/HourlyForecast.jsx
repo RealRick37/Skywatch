@@ -1,15 +1,4 @@
-import {Cloud, CloudRain, CloudSun, Sun} from "lucide-react";
-
-const hourlyData = [
-  { time: "Now", temperature: 24, condition: "clear" },
-  { time: "15:00", temperature: 25, condition: "clear" },
-  { time: "16:00", temperature: 26, condition: "cloudy" },
-  { time: "17:00", temperature: 25, condition: "cloudy" },
-  { time: "18:00", temperature: 23, condition: "cloudy" },
-  { time: "19:00", temperature: 21, condition: "rain" },
-  { time: "20:00", temperature: 20, condition: "rain" },
-  { time: "21:00", temperature: 19, condition: "clear" },
-];
+import { Cloud, CloudRain, CloudSun, Sun } from "lucide-react";
 
 function WeatherIcon({ condition }) {
   const icons = {
@@ -22,15 +11,23 @@ function WeatherIcon({ condition }) {
   return icons[condition] ?? <Cloud />;
 }
 
-function HourlyForecast() {
+function HourlyForecast({ weather }) {
+  const { current, hourly, units } = weather;
+
+  const currentIndex = hourly.findIndex(
+    (hour) => hour.time >= current.time
+  );
+
+  const visibleHours = hourly.slice(
+    currentIndex === -1 ? 0 : currentIndex,
+    (currentIndex === -1 ? 0 : currentIndex) + 24
+  );
+
   return (
     <section className="hourly-forecast">
       <div className="hourly-forecast__header">
         <div>
-          <span className="hourly-forecast__eyebrow">
-            Forecast
-          </span>
-
+          <span className="hourly-forecast__eyebrow">Forecast</span>
           <h2>Hourly forecast</h2>
         </div>
 
@@ -40,15 +37,20 @@ function HourlyForecast() {
       </div>
 
       <div className="hourly-forecast__list">
-        {hourlyData.map((hour) => (
+        {visibleHours.map((hour, index) => (
           <article
             className={`hourly-card ${
-              hour.time === "Now" ? "hourly-card--active" : ""
+              index === 0 ? "hourly-card--active" : ""
             }`}
             key={hour.time}
           >
             <span className="hourly-card__time">
-              {hour.time}
+              {index === 0
+                ? "Now"
+                : new Date(hour.time).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
             </span>
 
             <div className="hourly-card__icon">
@@ -56,7 +58,8 @@ function HourlyForecast() {
             </div>
 
             <strong className="hourly-card__temperature">
-              {hour.temperature}°
+              {Math.round(hour.temperature)}
+              {units.temperature}
             </strong>
           </article>
         ))}
