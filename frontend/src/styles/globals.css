@@ -391,6 +391,87 @@ img {
     );
 }
 
+.sky-background--drizzle {
+  background: #08131f;
+}
+
+.sky-background--drizzle .sky-background__mesh {
+  opacity: 0.8;
+
+  background:
+    radial-gradient(
+      ellipse at 25% 25%,
+      rgba(55, 145, 200, 0.18),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 75% 70%,
+      rgba(70, 100, 170, 0.14),
+      transparent 42%
+    );
+}
+
+.sky-background--fog {
+  background: #0a131e;
+}
+
+.sky-background--fog .sky-background__mesh {
+  opacity: 0.45;
+  filter: blur(75px);
+
+  background:
+    radial-gradient(
+      ellipse at 50% 40%,
+      rgba(175, 195, 210, 0.12),
+      transparent 45%
+    );
+}
+
+.sky-background--snow {
+  background: #091522;
+}
+
+.sky-background--snow .sky-background__mesh {
+  opacity: 0.7;
+
+  background:
+    radial-gradient(
+      ellipse at 30% 20%,
+      rgba(150, 205, 235, 0.18),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 75% 75%,
+      rgba(185, 205, 235, 0.12),
+      transparent 42%
+    );
+}
+
+.sky-background--storm {
+  background: #040912;
+}
+
+.sky-background--storm .sky-background__mesh {
+  opacity: 0.85;
+
+  background:
+    radial-gradient(
+      ellipse at 25% 20%,
+      rgba(95, 75, 180, 0.2),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 80% 65%,
+      rgba(65, 80, 155, 0.18),
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 50% 100%,
+      rgba(20, 90, 140, 0.1),
+      transparent 40%
+    );
+}
+
 
 .sky-background--night {
   background: #030813;

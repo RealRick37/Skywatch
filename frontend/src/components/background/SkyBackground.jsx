@@ -1,8 +1,8 @@
-function SkyBackground({ condition = "clear", isNight = false }) {
+function SkyBackground({ condition = "clear", night = false }) {
   const classes = [
     "sky-background",
     `sky-background--${condition}`,
-    isNight && "sky-background--night",
+    night ? "sky-background--night" : "",
   ]
     .filter(Boolean)
     .join(" ");
