@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import { CloudSun, MapPin, Search, X } from "lucide-react";
 
-function Navbar({onSearch, searchResults, searchLoading}) {
+function Navbar({onSearch, searchResults, searchLoading, onSelectCity}) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+
+  const handleSelectCity = (city) => {
+    onSelectCity(city);
+    setIsSearchOpen(false);
+    setQuery("");
+  };
 
   useEffect(() => {
     const trimmedQuery = query.trim();
@@ -75,6 +81,7 @@ function Navbar({onSearch, searchResults, searchLoading}) {
                     key={result.id}
                     className="navbar__search-result"
                     type="button"
+                    onClick={() => handleSelectCity(result)}
                   >
                     <div className="navbar__search-result-main">
                       <strong>{result.name}</strong>
