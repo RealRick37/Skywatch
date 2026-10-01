@@ -7,6 +7,11 @@ function WeatherHero({ weather }) {
   return (
     <section className="weather-hero">
       <div className="weather-hero__location">
+        <RevealText delay={150}>
+          {[location.name, location.country].filter(Boolean).join(", ") ||
+            location.timezone}
+        </RevealText>
+        
         <RevealText delay={100}>
           <MapPin size={18} />
         </RevealText>

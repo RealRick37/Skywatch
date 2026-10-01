@@ -6,40 +6,68 @@ import HourlyForecast from "./components/weather/HourlyForecast";
 import DailyForecast from "./components/weather/DailyForecast";
 import WeatherDetails from './components/weather/WeatherDetails';
 import SkyBackground from "./components/background/SkyBackground";
-import { getWeather, searchCity } from "./services/weather";
+import { getWeather, searchCity, reverseGeocode } from "./services/weather";
 
+function getLocationErrorMessage(error) {
+  switch (error.code) {
+    case 1:
+      return "Location permission was denied. Search for a city to continue.";
+    case 2:
+      return "Your location is unavailable. Search for a city to continue.";
+    case 3:
+      return "Location request timed out. Search for a city to continue.";
+    default:
+      return "Could not detect your location. Search for a city to continue.";
+  }
+}
 
 function App() {
   const [weather, setWeather] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [weatherLoading, setWeatherLoading] = useState(false);
   const [error, setError] = useState(null);
+
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
 
-  const handleSelectCity = async (city) => {
-    setSearchResults([]);
-    setLoading(true);
+  const [locationLoading, setLocationLoading] = useState(true);
+  const [locationError, setLocationError] = useState(null);
+
+  const loadWeather = useCallback(async (latitude, longitude, cityName) => {
+    setWeatherLoading(true);
     setError(null);
 
     try {
-      const response = await getWeather(
-        city.latitude,
-        city.longitude
-      );
+      const [response, place] = await Promise.all([
+        getWeather(latitude, longitude),
+        cityName
+          ? Promise.resolve(null)
+          : reverseGeocode(latitude, longitude).catch(() => null),
+      ]);
+
+      const data = response.data;
+      const name = cityName ?? place?.name;
+      const country = place?.country;
 
       setWeather({
-        ...response.data,
+        ...data,
         location: {
-          ...response.data.location,
-          name: city.name,
+          ...data.location,
+          ...(name && { name }),
+          ...(country && { country }),
         },
       });
-    } catch (error) {
-      console.error("Weather API error:", error);
+    } catch (err) {
+      console.error("Weather API error:", err);
       setError("Failed to load weather data.");
     } finally {
-      setLoading(false);
+      setWeatherLoading(false);
     }
+  }, []);
+
+  const handleSelectCity = (city) => {
+    setSearchResults([]);
+    setLocationError(null);
+    loadWeather(city.latitude, city.longitude, city.name);
   };
 
   const handleSearch = useCallback(async (city) => {
@@ -52,55 +80,76 @@ function App() {
 
     try {
       const response = await searchCity(city);
-      setSearchResults(response.data.results);
-    } catch (error) {
-      console.error("City search error:", error);
+      setSearchResults(response.data.results ?? []);
+    } catch (err) {
+      console.error("City search error:", err);
       setSearchResults([]);
     } finally {
       setSearchLoading(false);
     }
   }, []);
 
-   useEffect(() => {
-    getWeather(35.6892, 51.3890)
-      .then((response) => {
-        console.log(response.data);
-        setWeather(response.data);
-      })
-      .catch((error) => {
-        console.error("Weather API error:", error);
-        setError("Failed to load weather data.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setLocationError(
+        "Geolocation is not supported. Search for a city to continue."
+      );
+      setLocationLoading(false);
+      return;
+    }
 
-  if (loading) {
-    return <div>Loading weather...</div>;
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        setLocationLoading(false);
+        await loadWeather(latitude, longitude);
+      },
+      (err) => {
+        console.error("Geolocation error:", err);
+        setLocationError(getLocationErrorMessage(err));
+        setLocationLoading(false);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 300000,
+      }
+    );
+  }, [loadWeather]);
+
+  if (locationLoading) {
+    return <div>Detecting your location...</div>;
   }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
 
   return (
     <>
       <SkyBackground condition="clear" />
 
-      <Navbar onSearch={handleSearch} searchResults={searchResults} searchLoading={searchLoading} 
-      onSelectCity={handleSelectCity} />
+      <Navbar
+        onSearch={handleSearch}
+        searchResults={searchResults}
+        searchLoading={searchLoading}
+        onSelectCity={handleSelectCity}
+        locationName={weather?.location?.name}
+        locationError={locationError}
+      />
 
       <main>
-        <WeatherHero weather={weather} />
-        <HourlyForecast weather={weather} />
-        <DailyForecast weather={weather} />
-        <WeatherDetails weather={weather} />
+        {weather ? (
+          <>
+            <WeatherHero weather={weather} />
+            <HourlyForecast weather={weather} />
+            <DailyForecast weather={weather} />
+            <WeatherDetails weather={weather} />
+          </>
+        ) : weatherLoading ? (
+          <div>Loading weather...</div>
+        ) : (
+          <div>{error ?? locationError}</div>
+        )}
       </main>
     </>
   );
 }
-
 
 export default App;

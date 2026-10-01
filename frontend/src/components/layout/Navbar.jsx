@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CloudSun, MapPin, Search, X } from "lucide-react";
 
-function Navbar({onSearch, searchResults, searchLoading, onSelectCity}) {
+function Navbar({onSearch, searchResults, searchLoading, onSelectCity, locationName, locationError}) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -41,7 +41,8 @@ function Navbar({onSearch, searchResults, searchLoading, onSelectCity}) {
 
         <div className="navbar__location">
           <MapPin size={17} strokeWidth={2} />
-          <span>Detecting location...</span>
+          {locationName ??
+            (locationError ? "Location unavailable" : "Current location")}
         </div>
 
         {isSearchOpen ? (
