@@ -496,6 +496,148 @@ img {
     );
 }
 
+.weather-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.weather-particles__particle {
+  position: absolute;
+  top: -10%;
+  left: calc(mod(var(--particle-index) * 37, 100) * 1%);
+  opacity: 0;
+
+  animation-delay: calc(var(--particle-index) * -0.17s);
+}
+
+
+.weather-particles--drizzle .weather-particles__particle,
+.weather-particles--rain .weather-particles__particle,
+.weather-particles--storm .weather-particles__particle {
+  width: 1px;
+  height: 42px;
+
+  border-radius: 999px;
+
+  background: rgba(170, 215, 255, 0.3);
+
+  transform: rotate(12deg);
+
+  animation:
+    rain-fall 1.2s linear infinite;
+}
+
+.weather-particles--rain .weather-particles__particle,
+.weather-particles--storm .weather-particles__particle {
+  height: 55px;
+  background: rgba(175, 220, 255, 0.38);
+
+  animation-duration: 0.85s;
+}
+
+.weather-particles--drizzle .weather-particles__particle {
+  height: 28px;
+  opacity: 0.55;
+
+  animation-duration: 1.8s;
+}
+
+.weather-particles--snow .weather-particles__particle {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: rgba(235, 245, 255, 0.7);
+
+  filter: blur(0.5px);
+
+  animation:
+    snow-fall 7s linear infinite;
+}
+
+@keyframes rain-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(12deg);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.7;
+  }
+
+  90% {
+    opacity: 0.35;
+  }
+
+  100% {
+    transform: translate3d(-8vw, 110vh, 0) rotate(12deg);
+    opacity: 0;
+  }
+}
+
+@keyframes snow-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: translate3d(4vw, 50vh, 0);
+  }
+
+  90% {
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: translate3d(-3vw, 110vh, 0);
+    opacity: 0;
+  }
+}
+
+.sky-background--storm::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: rgba(150, 170, 255, 0);
+
+  animation: storm-flash 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes storm-flash {
+  0%,
+  92%,
+  100% {
+    background: rgba(150, 170, 255, 0);
+  }
+
+  94% {
+    background: rgba(170, 190, 255, 0.035);
+  }
+
+  95% {
+    background: rgba(170, 190, 255, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-background__mesh,
+  .sky-background__orb,
+  .weather-particles__particle,
+  .sky-background--storm::after {
+    animation: none;
+  }
+}
+
 @keyframes mesh-drift {
   from {
     transform: scale(1.1) translate3d(-2%, -1%, 0);

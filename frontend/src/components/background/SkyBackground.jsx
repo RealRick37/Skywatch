@@ -1,3 +1,5 @@
+import WeatherParticles from "./WeatherParticles";
+
 function SkyBackground({ condition = "clear", night = false }) {
   const classes = [
     "sky-background",
@@ -12,6 +14,7 @@ function SkyBackground({ condition = "clear", night = false }) {
       <div className="sky-background__mesh" />
       <div className="sky-background__orb sky-background__orb--one" />
       <div className="sky-background__orb sky-background__orb--two" />
+      <WeatherParticles condition={condition} />
       <div className="sky-background__noise" />
     </div>
   );
