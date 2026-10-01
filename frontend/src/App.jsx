@@ -1,6 +1,7 @@
 import './App.css'
 import { useCallback, useEffect, useState } from "react";
 import Navbar from "./components/layout/Navbar";
+import Sidebar from "./components/layout/Sidebar";
 import WeatherHero from "./components/weather/WeatherHero";
 import HourlyForecast from "./components/weather/HourlyForecast";
 import DailyForecast from "./components/weather/DailyForecast";
@@ -31,6 +32,8 @@ function App() {
 
   const [locationLoading, setLocationLoading] = useState(true);
   const [locationError, setLocationError] = useState(null);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const loadWeather = useCallback(async (latitude, longitude, cityName) => {
     setWeatherLoading(true);
@@ -124,6 +127,17 @@ function App() {
   return (
     <>
       <SkyBackground condition="clear" />
+
+      <Sidebar
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen((open) => !open)}
+      />
+
+      <div
+        className={`app-shell ${
+          sidebarOpen ? "app-shell--sidebar-open" : ""
+        }`}
+      ></div>
 
       <Navbar
         onSearch={handleSearch}
