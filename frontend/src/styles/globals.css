@@ -67,11 +67,11 @@ img {
 .navbar {
   position: sticky;
   top: 18px;
-  z-index: 20;
+  z-index: 40;
+  isolation: isolate;
 
   width: calc(100% - 48px);
   max-width: var(--container-width);
-
   margin: 18px auto 0;
   padding: 12px 16px;
 
