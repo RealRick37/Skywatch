@@ -540,6 +540,10 @@ img {
   line-height: 0.85;
   letter-spacing: -0.07em;
 
+  filter: drop-shadow(0 0 50px rgba(var(--tint), 0.35));
+}
+
+.weather-hero__temperature .mask-text__inner {
   background: linear-gradient(
     180deg,
     #fff 10%,
@@ -548,8 +552,6 @@ img {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-
-  filter: drop-shadow(0 0 50px rgba(var(--tint), 0.35));
 }
 
 .weather-hero__degree {
@@ -1212,6 +1214,36 @@ img {
     var(--reveal-delay) forwards;
 }
 
+.mask-text {
+  display: block;
+  overflow: hidden;
+  /* فضا برای بالا و پایین حروف، چون line-height دما 0.85 است */
+  padding-block: 0.14em;
+  margin-block: -0.14em;
+}
+
+.mask-text__inner {
+  display: block;
+  transform: translateY(130%);
+  animation: line-up 1.05s var(--e-out) var(--reveal-delay, 0ms) forwards;
+}
+
+/* letter-spacing آخر خط رو خالی می‌ذاره و متن رو از وسط خارج می‌کنه */
+.weather-hero__condition .mask-text__inner {
+  padding-left: 0.38em;
+}
+
+@keyframes line-up {
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mask-text__inner {
+    transform: none;
+    animation: none;
+  }
+}
+
 .reveal-text.weather-hero__temperature,
 .reveal-text.weather-hero__condition,
 .reveal-text.weather-hero__feels {
@@ -1654,5 +1686,58 @@ img {
   .daily-card::after,
   .weather-detail::after {
     display: none;
+  }
+}
+
+:root {
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes shell-slide-left {
+  from { opacity: 0; transform: translateX(-26px); }
+}
+
+@keyframes shell-drop {
+  from { opacity: 0; transform: translateY(-14px); }
+}
+
+@keyframes shell-pop {
+  from { opacity: 0; transform: scale(0.7); }
+}
+
+@keyframes shell-rise {
+  from { opacity: 0; transform: translateY(10px); }
+}
+
+
+.sidebar {
+  animation: shell-slide-left 0.9s var(--e-out) 0.05s backwards;
+}
+
+.sidebar__toggle {
+  animation: shell-pop 0.6s var(--e-out) 0.28s backwards;
+}
+
+.sidebar__nav > :nth-child(1) { animation: shell-rise 0.6s var(--e-out) 0.36s backwards; }
+.sidebar__nav > :nth-child(2) { animation: shell-rise 0.6s var(--e-out) 0.42s backwards; }
+.sidebar__nav > :nth-child(3) { animation: shell-rise 0.6s var(--e-out) 0.48s backwards; }
+.sidebar__nav > :nth-child(4) { animation: shell-rise 0.6s var(--e-out) 0.54s backwards; }
+.sidebar__nav > :nth-child(5) { animation: shell-rise 0.6s var(--e-out) 0.6s backwards; }
+
+.sidebar__bottom {
+  animation: shell-rise 0.6s var(--e-out) 0.7s backwards;
+}
+
+.navbar {
+  animation: shell-drop 0.8s var(--e-out) 0.15s backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar__toggle,
+  .sidebar__nav > *,
+  .sidebar__bottom,
+  .navbar {
+    animation: none;
   }
 }

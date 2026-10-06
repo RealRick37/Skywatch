@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { Droplets, Eye, Gauge, MapPin, Wind } from "lucide-react";
 import RevealText from "../ui/RevealText";
 import WeatherVisual from "./WeatherVisual";
+import MaskText from "../ui/MaskText";
 
 function WeatherHero({ weather, condition, night }) {
   const heroRef = useRef(null);
@@ -41,18 +42,18 @@ function WeatherHero({ weather, condition, night }) {
         <div className="weather-hero__main">
           <WeatherVisual weatherCode={current.weather_code} />
 
-          <RevealText className="weather-hero__temperature" delay={250}>
+          <MaskText className="weather-hero__temperature" delay={300}>
             {Math.round(current.temperature)}
             <span className="weather-hero__degree">°</span>
-          </RevealText>
+          </MaskText>
 
-          <RevealText className="weather-hero__condition" delay={450}>
+          <MaskText className="weather-hero__condition" delay={480}>
             {current.condition}
-          </RevealText>
+          </MaskText>
 
-          <RevealText className="weather-hero__feels" delay={600}>
+          <MaskText className="weather-hero__feels" delay={600}>
             Feels like {Math.round(current.feels_like)}°
-          </RevealText>
+          </MaskText>
         </div>
 
         <div className="weather-hero__stats">
