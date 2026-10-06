@@ -1217,7 +1217,6 @@ img {
 .mask-text {
   display: block;
   overflow: hidden;
-  /* فضا برای بالا و پایین حروف، چون line-height دما 0.85 است */
   padding-block: 0.14em;
   margin-block: -0.14em;
 }
@@ -1228,7 +1227,6 @@ img {
   animation: line-up 1.05s var(--e-out) var(--reveal-delay, 0ms) forwards;
 }
 
-/* letter-spacing آخر خط رو خالی می‌ذاره و متن رو از وسط خارج می‌کنه */
 .weather-hero__condition .mask-text__inner {
   padding-left: 0.38em;
 }
@@ -1303,65 +1301,177 @@ img {
   font-size: 0.8rem;
 }
 
-.hourly-forecast__list {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 10px;
-}
 
-.hourly-card {
-  min-width: 0;
-  padding: 18px 12px;
+.hourly-chart {
+  color: var(--color-accent);
+
+  padding: 22px 8px 12px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+
   background: var(--color-surface);
   backdrop-filter: blur(var(--blur-glass));
-  text-align: center;
-
-  transition:
-    transform var(--transition-normal),
-    background var(--transition-normal),
-    border-color var(--transition-normal);
 }
 
-.hourly-card:hover {
-  transform: translateY(-4px);
-  background: var(--color-surface-hover);
-  border-color: rgba(255, 255, 255, 0.16);
+.hourly-chart__scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-.hourly-card--active {
-  background: var(--color-accent-soft);
-  border-color: rgba(114, 214, 255, 0.3);
+.hourly-chart__scroll::-webkit-scrollbar {
+  display: none;
 }
 
-.hourly-card__time {
-  display: block;
+.hourly-chart__inner {
+  position: relative;
+  min-width: 760px;
+}
+
+
+.hourly-chart:not(.is-visible) .hourly-chart__inner * {
+  animation-play-state: paused;
+}
+
+.hourly-chart__labels {
+  display: grid;
+  grid-template-columns: repeat(var(--count), 1fr);
+}
+
+.hourly-chart__label {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+
   color: var(--color-text-secondary);
   font-size: 0.78rem;
+
+  animation: label-in 0.6s var(--e-out) calc(0.1s + var(--i) * 0.05s) both;
 }
 
-.hourly-card--active .hourly-card__time {
+.hourly-chart__label--now {
   color: var(--color-accent);
   font-weight: 600;
 }
 
-.hourly-card__icon {
+.hourly-chart__icon {
   display: grid;
   place-items: center;
-  margin: 18px 0;
   color: var(--color-text-primary);
 }
 
-.hourly-card__icon svg {
-  width: 25px;
-  height: 25px;
+.hourly-chart__icon svg {
+  width: 22px;
+  height: 22px;
   stroke-width: 1.6;
 }
 
-.hourly-card__temperature {
-  font-size: 1rem;
+.hourly-chart__plot {
+  position: relative;
+  height: 160px;
+  margin-top: 14px;
+}
+
+.hourly-chart__layer {
+  position: absolute;
+  inset: 0;
+}
+
+.hourly-chart__layer svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+
+.hourly-chart__layer--line {
+  animation: wipe-x 1.4s cubic-bezier(0.37, 0.01, 0.2, 1) 0.1s both;
+}
+
+.hourly-chart__layer--fill {
+  animation: wipe-x 1.4s cubic-bezier(0.37, 0.01, 0.2, 1) 0.32s both;
+}
+
+.hourly-chart__area {
+  fill: url(#hc-fill);
+}
+
+.hourly-chart__glow,
+.hourly-chart__stroke {
+  fill: none;
+  stroke: url(#hc-line);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hourly-chart__glow {
+  stroke-width: 8;
+  opacity: 0.18;
+}
+
+.hourly-chart__stroke {
+  stroke-width: 2.5;
+}
+
+.hourly-chart__point {
+  position: absolute;
+}
+
+.hourly-chart__dot {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(114, 214, 255, 0.22);
+  transform: translate(-50%, -50%);
+
+  animation: point-in 0.5s var(--e-out) calc(0.1s + var(--i) * 0.11s) both;
+}
+
+.hourly-chart__point--now .hourly-chart__dot {
+  width: 12px;
+  height: 12px;
+  box-shadow:
+    0 0 0 5px rgba(114, 214, 255, 0.28),
+    0 0 24px rgba(114, 214, 255, 0.6);
+}
+
+.hourly-chart__temp {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 12px));
+
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
   font-weight: 500;
+  white-space: nowrap;
+
+  animation: temp-in 0.5s var(--e-out) calc(0.2s + var(--i) * 0.11s) both;
+}
+
+@keyframes wipe-x {
+  from { clip-path: inset(-20px 100% -20px 0); }
+  to   { clip-path: inset(-20px -20px -20px 0); }
+}
+
+@keyframes label-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+@keyframes point-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+}
+
+@keyframes temp-in {
+  from { opacity: 0; transform: translate(-50%, calc(-100% - 2px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hourly-chart__inner * {
+    animation: none !important;
+  }
 }
 
 @media (max-width: 900px) {

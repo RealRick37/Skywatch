@@ -1,6 +1,6 @@
 import {Cloud, CloudFog, CloudLightning, CloudRain, CloudSun, Snowflake, Sun} from "lucide-react";
 
-function getWeatherVisual(code) {
+export function getWeatherVisual(code) {
   if (code === 0) {
     return {
       type: "clear",
