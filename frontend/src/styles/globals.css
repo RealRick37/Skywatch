@@ -1615,3 +1615,44 @@ img {
     flex-wrap: wrap;
   }
 }
+
+.hourly-card,
+.daily-card,
+.weather-detail {
+  position: relative;
+  overflow: hidden;
+}
+
+.hourly-card::after,
+.daily-card::after,
+.weather-detail::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 38%;
+  pointer-events: none;
+
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.17) 50%,
+    transparent 100%
+  );
+  transform: translate3d(-150%, 0, 0) skewX(-18deg);
+
+  animation: sheen 1.15s cubic-bezier(0.22, 0.61, 0.36, 1) 1.8s 1 both;
+}
+
+@keyframes sheen {
+  to { transform: translate3d(260%, 0, 0) skewX(-18deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hourly-card::after,
+  .daily-card::after,
+  .weather-detail::after {
+    display: none;
+  }
+}
