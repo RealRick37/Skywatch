@@ -8,6 +8,7 @@ import DailyForecast from "./components/weather/DailyForecast";
 import WeatherDetails from './components/weather/WeatherDetails';
 import SkyBackground from "./components/background/SkyBackground";
 import { getWeather, searchCity, reverseGeocode } from "./services/weather";
+import { getWeatherCondition, isNight } from "./utils/weather";
 
 function getLocationErrorMessage(error) {
   switch (error.code) {
@@ -22,55 +23,6 @@ function getLocationErrorMessage(error) {
   }
 }
 
-function getWeatherCondition(weather) {
-  const code = weather?.current?.weather_code;
-
-  if (code === undefined || code === null) {
-    return "clear";
-  }
-
-  if (code === 0) return "clear";
-
-  if ([1, 2, 3].includes(code)) {
-    return "cloudy";
-  }
-
-  if ([45, 48].includes(code)) {
-    return "fog";
-  }
-
-  if ([51, 53, 55, 56, 57].includes(code)) {
-    return "drizzle";
-  }
-
-  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
-    return "rain";
-  }
-
-  if ([71, 73, 75, 77, 85, 86].includes(code)) {
-    return "snow";
-  }
-
-  if ([95, 96, 99].includes(code)) {
-    return "storm";
-  }
-
-  return "clear";
-}
-
-function isNight(weather) {
-  const currentTime = weather?.current?.time;
-  const sunrise = weather?.daily?.[0]?.sunrise;
-  const sunset = weather?.daily?.[0]?.sunset;
-
-  if (!currentTime || !sunrise || !sunset) {
-    return false;
-  }
-
-  return currentTime < sunrise || currentTime > sunset;
-}
-
-
 function App() {
   const [weather, setWeather] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
@@ -84,7 +36,7 @@ function App() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const weatherCondition = getWeatherCondition(weather);
+  const condition = getWeatherCondition(weather);
   const night = isNight(weather);
 
   const loadWeather = useCallback(async (latitude, longitude, cityName) => {
@@ -178,7 +130,7 @@ function App() {
 
   return (
     <>
-      <SkyBackground condition={weatherCondition} night={night} />
+      <SkyBackground condition={condition} night={night} />
 
       <Sidebar
         isOpen={sidebarOpen}
@@ -186,34 +138,36 @@ function App() {
       />
 
       <div
-        className={`app-shell ${
-          sidebarOpen ? "app-shell--sidebar-open" : ""
-        }`}
-      ></div>
+        className={`app-shell ${sidebarOpen ? "app-shell--sidebar-open" : ""}`}
+      >
+        <Navbar
+          onSearch={handleSearch}
+          searchResults={searchResults}
+          searchLoading={searchLoading}
+          onSelectCity={handleSelectCity}
+          locationName={weather?.location?.name}
+          locationError={locationError}
+        />
 
-      <Navbar
-        onSearch={handleSearch}
-        searchResults={searchResults}
-        searchLoading={searchLoading}
-        onSelectCity={handleSelectCity}
-        locationName={weather?.location?.name}
-        locationError={locationError}
-      />
-
-      <main>
-        {weather ? (
-          <>
-            <WeatherHero weather={weather} />
-            <HourlyForecast weather={weather} />
-            <DailyForecast weather={weather} />
-            <WeatherDetails weather={weather} />
-          </>
-        ) : weatherLoading ? (
-          <div>Loading weather...</div>
-        ) : (
-          <div>{error ?? locationError}</div>
-        )}
-      </main>
+        <main>
+          {weather ? (
+            <>
+              <WeatherHero
+                weather={weather}
+                condition={condition}
+                night={night}
+              />
+              <HourlyForecast weather={weather} />
+              <DailyForecast weather={weather} />
+              <WeatherDetails weather={weather} />
+            </>
+          ) : weatherLoading ? (
+            <div>Loading weather...</div>
+          ) : (
+            <div>{error ?? locationError}</div>
+          )}
+        </main>
+      </div>
     </>
   );
 }
