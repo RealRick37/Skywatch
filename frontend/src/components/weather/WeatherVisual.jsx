@@ -76,5 +76,4 @@ function WeatherVisual({ weatherCode }) {
   );
 }
 
-export { getWeatherVisual };
 export default WeatherVisual;

@@ -7,6 +7,7 @@ import HourlyForecast from "./components/weather/HourlyForecast";
 import DailyForecast from "./components/weather/DailyForecast";
 import WeatherDetails from './components/weather/WeatherDetails';
 import SkyBackground from "./components/background/SkyBackground";
+import Favorites from "./components/favorites/Favorites";
 import { getWeather, searchCity, reverseGeocode } from "./services/weather";
 import { getWeatherCondition, isNight } from "./utils/weather";
 
@@ -38,6 +39,8 @@ function App() {
 
   const condition = getWeatherCondition(weather);
   const night = isNight(weather);
+
+  const [activeView, setActiveView] = useState("today");
 
   const loadWeather = useCallback(async (latitude, longitude, cityName) => {
     setWeatherLoading(true);
@@ -135,6 +138,8 @@ function App() {
       <Sidebar
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen((open) => !open)}
+        activeView={activeView}
+        onNavigate={setActiveView}
       />
 
       <div
@@ -150,7 +155,15 @@ function App() {
         />
 
         <main>
-          {weather ? (
+          {activeView === "favorites" ? (
+    <Favorites
+      onSelectCity={(city) => {
+        setActiveView("today");
+        loadWeather(city.latitude, city.longitude, city.name);
+      }}
+    />
+  ) 
+          : weather ? (
             <>
               <WeatherHero
                 weather={weather}
