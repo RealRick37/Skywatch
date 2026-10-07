@@ -27,3 +27,11 @@ export const reverseGeocode = async (latitude, longitude) => {
     country: data.countryName || null,
   };
 };
+
+export const getFavoriteWeather = () => {
+  return api.get("favorites/weather/");
+};
+
+export const deleteFavorite = (id) => {
+  return api.delete(`favorites/${id}/`);
+};
