@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CloudSun, MapPin, Search, X } from "lucide-react";
 
-function Navbar({onSearch, searchResults, searchLoading, onSelectCity, locationName, locationError}) {
+function Navbar({onSearch, searchResults, searchLoading, onSelectCity, locationName, locationError, user, onAuthClick, onLogout}) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -43,6 +43,32 @@ function Navbar({onSearch, searchResults, searchLoading, onSelectCity, locationN
           <MapPin size={17} strokeWidth={2} />
           {locationName ??
             (locationError ? "Location unavailable" : "Current location")}
+        </div>
+
+        <div className="navbar__account">
+          {user ? (
+            <>
+              <span className="navbar__username">
+                {user.username}
+              </span>
+
+              <button
+                className="navbar__auth-button"
+                type="button"
+                onClick={onLogout}
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <button
+              className="navbar__auth-button"
+              type="button"
+              onClick={onAuthClick}
+            >
+              Sign in
+            </button>
+          )}
         </div>
 
         {isSearchOpen ? (

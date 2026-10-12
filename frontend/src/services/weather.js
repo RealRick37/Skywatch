@@ -29,9 +29,9 @@ export const reverseGeocode = async (latitude, longitude) => {
 };
 
 export const getFavoriteWeather = () => {
-  return api.get("favorites/weather/");
+  return api.get("weather/favorites/weather/");
 };
 
 export const deleteFavorite = (id) => {
-  return api.delete(`favorites/${id}/`);
+  return api.delete(`weather/favorites/${id}/`);
 };

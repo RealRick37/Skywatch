@@ -10,6 +10,8 @@ import SkyBackground from "./components/background/SkyBackground";
 import Favorites from "./components/favorites/Favorites";
 import { getWeather, searchCity, reverseGeocode } from "./services/weather";
 import { getWeatherCondition, isNight } from "./utils/weather";
+import AuthPage from "./components/auth/AuthPage";
+import { getCurrentUser } from "./services/auth";
 
 function getLocationErrorMessage(error) {
   switch (error.code) {
@@ -41,6 +43,44 @@ function App() {
   const night = isNight(weather);
 
   const [activeView, setActiveView] = useState("today");
+
+  const [user, setUser] = useState(null);
+  const [showAuth, setShowAuth] = useState(false);
+
+  const handleAuthenticated = async () => {
+    const response = await getCurrentUser();
+    setUser(response.data);
+    setShowAuth(false);
+    setActiveView("today");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    setUser(null);
+    setShowAuth(false);
+    setActiveView("today");
+  };
+
+  useEffect(() => {
+    window.addEventListener("auth:logout", handleLogout);
+
+    return () => {
+      window.removeEventListener("auth:logout", handleLogout);
+    };
+  }, []);
+
+  
+  const handleNavigate = (view) => {
+    if (view === "favorites" && !user) {
+      setShowAuth(true);
+      return;
+    }
+
+    setShowAuth(false);
+    setActiveView(view);
+  };
+
 
   const loadWeather = useCallback(async (latitude, longitude, cityName) => {
     setWeatherLoading(true);
@@ -100,6 +140,23 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const accessToken = localStorage.getItem("access_token");
+
+    if (!accessToken) return;
+
+    getCurrentUser()
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((err) => {
+        console.error("Session restore failed:", err);
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        setUser(null);
+      });
+  }, []);
+
+  useEffect(() => {
     if (!navigator.geolocation) {
       setLocationError(
         "Geolocation is not supported. Search for a city to continue."
@@ -138,8 +195,8 @@ function App() {
       <Sidebar
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen((open) => !open)}
-        activeView={activeView}
-        onNavigate={setActiveView}
+        activeView={showAuth ? "" : activeView}
+        onNavigate={handleNavigate}
       />
 
       <div
@@ -152,17 +209,25 @@ function App() {
           onSelectCity={handleSelectCity}
           locationName={weather?.location?.name}
           locationError={locationError}
+          user={user}
+          onAuthClick={() => setShowAuth(true)}
+          onLogout={handleLogout}
         />
 
         <main>
-          {activeView === "favorites" ? (
-    <Favorites
-      onSelectCity={(city) => {
-        setActiveView("today");
-        loadWeather(city.latitude, city.longitude, city.name);
-      }}
-    />
-  ) 
+          {showAuth ? (
+            <AuthPage
+              onAuthenticated={handleAuthenticated}
+              onBack={() => setShowAuth(false)}
+            />
+          ) : activeView === "favorites" ? (
+            <Favorites
+              onSelectCity={(city) => {
+                setActiveView("today");
+                loadWeather(city.latitude, city.longitude, city.name);
+              }}
+            />
+          ) 
           : weather ? (
             <>
               <WeatherHero
