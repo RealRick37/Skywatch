@@ -12,6 +12,7 @@ import { getWeather, searchCity, reverseGeocode } from "./services/weather";
 import { getWeatherCondition, isNight } from "./utils/weather";
 import AuthPage from "./components/auth/AuthPage";
 import { getCurrentUser } from "./services/auth";
+import DevSkySwitcher from "./components/dev/DevSkySwitcher";
 
 function getLocationErrorMessage(error) {
   switch (error.code) {
@@ -39,8 +40,11 @@ function App() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const condition = getWeatherCondition(weather);
-  const night = isNight(weather);
+  const [skyOverride, setSkyOverride] = useState(null);
+  const [nightOverride, setNightOverride] = useState(null);
+
+  const condition = skyOverride ?? getWeatherCondition(weather);
+  const night = nightOverride ?? isNight(weather);
 
   const [activeView, setActiveView] = useState("today");
 
@@ -191,6 +195,15 @@ function App() {
   return (
     <>
       <SkyBackground condition={condition} night={night} />
+
+      {import.meta.env.DEV && (
+        <DevSkySwitcher
+          sky={skyOverride}
+          night={nightOverride}
+          onSky={setSkyOverride}
+          onNight={setNightOverride}
+        />
+      )}
 
       <Sidebar
         isOpen={sidebarOpen}

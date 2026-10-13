@@ -14,6 +14,24 @@ function SkyBackground({ condition = "clear", night = false }) {
       <div className="sky-background__mesh" />
       <div className="sky-background__orb sky-background__orb--one" />
       <div className="sky-background__orb sky-background__orb--two" />
+
+      {condition === "clear" && !night && (
+        <div className="sky-background__rays" />
+      )}
+
+      {night && condition !== "storm" && (
+        <div className="sky-background__stars" />
+      )}
+
+      {condition !== "clear" && (
+        <div className="sky-background__clouds">
+          <span className="sky-cloud" />
+          <span className="sky-cloud" />
+          <span className="sky-cloud" />
+          <span className="sky-cloud" />
+        </div>
+      )}
+
       <WeatherParticles condition={condition} />
       <div className="sky-background__noise" />
     </div>

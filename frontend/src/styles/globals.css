@@ -1851,3 +1851,168 @@ img {
     animation: none;
   }
 }
+
+
+#root {
+  position: relative;
+  z-index: 0;
+}
+
+.weather-particles--drizzle .weather-particles__particle,
+.weather-particles--rain .weather-particles__particle,
+.weather-particles--storm .weather-particles__particle {
+  width: 1.5px;
+  height: 48px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, transparent, rgba(190, 225, 255, 0.75));
+  transform: rotate(12deg);
+  animation: rain-fall 1.2s linear infinite;
+}
+
+.weather-particles--rain .weather-particles__particle,
+.weather-particles--storm .weather-particles__particle {
+  height: 64px;
+  animation-duration: 0.8s;
+}
+
+.weather-particles--drizzle .weather-particles__particle {
+  height: 32px;
+  animation-duration: 1.7s;
+}
+
+.weather-particles--snow .weather-particles__particle {
+  border-radius: 50%;
+  background: rgba(240, 248, 255, 0.95);
+  box-shadow: 0 0 8px rgba(220, 238, 255, 0.6);
+  filter: none;
+  animation: snow-fall 8s linear infinite;
+}
+
+@keyframes rain-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(12deg);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  90% { opacity: 0.6; }
+  100% {
+    transform: translate3d(-8vw, 110vh, 0) rotate(12deg);
+    opacity: 0;
+  }
+}
+
+
+.sky-background {
+  --cloud-rgb: 175, 195, 220;
+  --cloud-alpha: 0;
+}
+
+.sky-background--cloudy  { --cloud-alpha: 0.34; }
+.sky-background--fog     { --cloud-alpha: 0.38; }
+.sky-background--drizzle { --cloud-alpha: 0.32; }
+.sky-background--snow    { --cloud-alpha: 0.3;  --cloud-rgb: 200, 220, 240; }
+.sky-background--rain    { --cloud-alpha: 0.38; --cloud-rgb: 120, 145, 185; }
+.sky-background--storm   { --cloud-alpha: 0.5;  --cloud-rgb: 70, 85, 130; }
+
+.sky-background__clouds {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sky-cloud {
+  position: absolute;
+  left: -70vw;
+  width: 65vw;
+  height: 26vh;
+  border-radius: 50%;
+  background: rgba(var(--cloud-rgb), var(--cloud-alpha));
+  filter: blur(48px);
+  will-change: transform;
+  animation: cloud-drift 80s linear infinite;
+}
+
+.sky-cloud:nth-child(1) { top: 2%;  animation-duration: 90s;  animation-delay: -30s; }
+.sky-cloud:nth-child(2) { top: 22%; animation-duration: 120s; animation-delay: -85s; height: 20vh; }
+.sky-cloud:nth-child(3) { top: 45%; animation-duration: 105s; animation-delay: -12s; width: 80vw; }
+.sky-cloud:nth-child(4) { top: 68%; animation-duration: 140s; animation-delay: -60s; height: 22vh; }
+
+.sky-background--fog .sky-cloud {
+  width: 100vw;
+  animation-duration: 160s;
+}
+
+@keyframes cloud-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(180vw, 0, 0); }
+}
+
+
+.sky-background__rays {
+  position: absolute;
+  top: -40vmax;
+  left: -40vmax;
+  width: 100vmax;
+  height: 100vmax;
+
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(255, 205, 130, 0.14) 0deg 5deg,
+    transparent 5deg 17deg
+  );
+  -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  filter: blur(5px);
+  pointer-events: none;
+
+  animation: rays-spin 140s linear infinite;
+}
+
+@keyframes rays-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-cloud,
+  .sky-background__rays {
+    animation: none;
+  }
+
+  .sky-cloud { left: 10vw; }
+}
+
+
+.dev-switcher {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 100;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 280px;
+  padding: 10px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: rgba(7, 17, 31, 0.8);
+  backdrop-filter: blur(16px);
+}
+
+.dev-switcher button {
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.dev-switcher button.is-active {
+  background: var(--color-accent-soft);
+  border-color: rgba(114, 214, 255, 0.4);
+  color: var(--color-accent);
+}
