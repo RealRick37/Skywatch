@@ -272,6 +272,63 @@ img {
 }
 
 
+
+.navbar__account {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.navbar__username {
+  max-width: 130px;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navbar__auth-button {
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.navbar__auth-button:hover {
+  background: var(--color-surface-hover);
+  border-color: rgba(114, 214, 255, 0.35);
+}
+
+@media (max-width: 760px) {
+  .navbar__inner {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .navbar__account {
+    margin-left: auto;
+  }
+
+  .navbar__location {
+    order: 3;
+  }
+
+  .navbar__search,
+  .navbar__search-wrapper {
+    order: 4;
+  }
+}
+
+
 .sidebar {
   position: fixed;
   top: 24px;

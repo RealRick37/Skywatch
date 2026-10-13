@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import FavoriteWeatherCard from "./FavoriteWeatherCard";
-import {
-  deleteFavorite,
-  getFavoriteWeather,
-} from "../../services/weather";
+import {deleteFavorite, getFavoriteWeather} from "../../services/weather";
+import "./Favorites.css";
 
 function Favorites({ onSelectCity }) {
   const [favorites, setFavorites] = useState([]);
