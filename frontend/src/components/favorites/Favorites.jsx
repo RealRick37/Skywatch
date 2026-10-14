@@ -102,14 +102,20 @@ function Favorites({ onSelectCity }) {
 
       {!loading && !error && favorites.length > 0 && (
         <div className="favorites-grid">
-          {favorites.map((favorite) => (
-            <FavoriteWeatherCard
-              key={favorite.id}
-              favorite={favorite}
-              onDelete={handleDelete}
-              onSelect={handleSelect}
-            />
-          ))}
+          {favorites.map((favorite) =>
+            favorite.error ? (
+              <article className="favorite-card" key={favorite.id}>
+                <h3>{favorite.name}</h3>
+                <p>Weather data is currently unavailable.</p>
+              </article>
+            ) : (
+              <FavoriteWeatherCard
+                key={favorite.id}
+                favorite={favorite}
+                onDelete={handleDelete}
+                onSelect={handleSelect}
+              />
+            ))}
         </div>
       )}
     </section>

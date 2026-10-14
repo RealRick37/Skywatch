@@ -18,8 +18,9 @@ function Sidebar({ isOpen, onToggle, activeView, onNavigate }) {
         <SidebarItem
           icon={<CloudSun />}
           label="Today"
-          active
+          active={activeView === "today"}
           isOpen={isOpen}
+          onClick={() => onNavigate("today")}
         />
 
         <SidebarItem
