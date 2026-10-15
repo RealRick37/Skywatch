@@ -1,10 +1,10 @@
 import { useRef } from "react";
-import { Droplets, Eye, Gauge, MapPin, Wind } from "lucide-react";
+import { Droplets, Eye, Gauge, MapPin, Wind, Check, Star   } from "lucide-react";
 import RevealText from "../ui/RevealText";
 import WeatherVisual from "./WeatherVisual";
 import MaskText from "../ui/MaskText";
 
-function WeatherHero({ weather, condition, night }) {
+function WeatherHero({ weather, condition, night, user, isFavorite, favoriteLoading, onAddFavorite, onAuthClick }) {
   const heroRef = useRef(null);
   const { location, current, units } = weather;
 
@@ -19,6 +19,17 @@ function WeatherHero({ weather, condition, night }) {
     const rect = el.getBoundingClientRect();
     el.style.setProperty("--mx", `${((event.clientX - rect.left) / rect.width) * 100}%`);
     el.style.setProperty("--my", `${((event.clientY - rect.top) / rect.height) * 100}%`);
+  };
+
+  const handleFavoriteClick = () => {
+    if (!user) {
+      onAuthClick();
+      return;
+    }
+
+    if (isFavorite || favoriteLoading) return;
+
+    onAddFavorite();
   };
 
   return (
@@ -37,6 +48,38 @@ function WeatherHero({ weather, condition, night }) {
         <div className="weather-hero__location">
           <MapPin size={15} strokeWidth={1.8} />
           <RevealText delay={150}>{locationLabel}</RevealText>
+          <button
+            type="button"
+            className={`weather-hero__favorite ${
+              isFavorite ? "weather-hero__favorite--added" : ""
+            }`}
+            onClick={handleFavoriteClick}
+            disabled={Boolean(user) && (isFavorite || favoriteLoading)}
+            aria-label={
+              isFavorite ? "Already in favorites" : "Add to favorites"
+            }
+            title={
+              !user
+                ? "Sign in to save this city"
+                : isFavorite
+                  ? "Added to favorites"
+                  : "Add to favorites"
+            }
+          >
+            {isFavorite ? (
+              <Check size={16} />
+            ) : (
+              <Star size={16} />
+            )}
+
+            <span>
+              {favoriteLoading
+                ? "Saving..."
+                : isFavorite
+                  ? "Added to Favorites"
+                  : "Add to Favorites"}
+            </span>
+          </button>
         </div>
 
         <div className="weather-hero__main">

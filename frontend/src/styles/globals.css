@@ -1305,6 +1305,49 @@ img {
   display: block;
 }
 
+.weather-hero__favorite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-left: 12px;
+  padding: 7px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease;
+}
+
+.weather-hero__favorite:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.weather-hero__favorite:disabled {
+  cursor: default;
+  opacity: 0.8;
+}
+
+.weather-hero__favorite--added {
+  border-color: rgba(120, 220, 170, 0.35);
+}
+
+@media (max-width: 600px) {
+  .weather-hero__favorite {
+    margin-left: 6px;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+}
+
+
 @keyframes reveal-text {
   to {
     opacity: 1;
