@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { CloudSun, MapPin, Search, X } from "lucide-react";
+import { CloudSun, MapPin, Search, X, LocateFixed } from "lucide-react";
 
-function Navbar({onSearch, searchResults, searchLoading, onSelectCity, locationName, locationError, user, onAuthClick, onLogout}) {
+function Navbar({onSearch, searchResults, searchLoading, onSelectCity, locationName, locationError, user, onAuthClick, onLogout, onReturnToCurrentLocation, isCurrentLocation}) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -43,6 +43,17 @@ function Navbar({onSearch, searchResults, searchLoading, onSelectCity, locationN
           <MapPin size={17} strokeWidth={2} />
           {locationName ??
             (locationError ? "Location unavailable" : "Current location")}
+          
+          <button
+            type="button"
+            className="navbar__current-location"
+            onClick={onReturnToCurrentLocation}
+            disabled={isCurrentLocation || !onReturnToCurrentLocation}
+            title="Return to current location"
+            aria-label="Return to current location"
+          >
+            <LocateFixed size={17} />
+          </button>
         </div>
 
         <div className="navbar__account">

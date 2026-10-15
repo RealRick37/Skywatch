@@ -35,3 +35,7 @@ export const getFavoriteWeather = () => {
 export const deleteFavorite = (id) => {
   return api.delete(`weather/favorites/${id}/`);
 };
+
+export const addFavorite = (location) => {
+  return api.post("weather/favorites/", location);
+};

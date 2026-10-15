@@ -38,6 +38,9 @@ function App() {
   const [locationLoading, setLocationLoading] = useState(true);
   const [locationError, setLocationError] = useState(null);
 
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [isCurrentLocation, setIsCurrentLocation] = useState(true);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [skyOverride, setSkyOverride] = useState(null);
@@ -83,6 +86,7 @@ function App() {
 
     setShowAuth(false);
     setActiveView(view);
+    setSidebarOpen(false);
   };
 
 
@@ -121,7 +125,25 @@ function App() {
   const handleSelectCity = (city) => {
     setSearchResults([]);
     setLocationError(null);
+    setIsCurrentLocation(false);
+    setActiveView("today");
     loadWeather(city.latitude, city.longitude, city.name);
+  };
+
+  const handleReturnToCurrentLocation = () => {
+    if (!currentLocation) {
+      setLocationError("Current location is not available yet.");
+      return;
+    }
+
+    setIsCurrentLocation(true);
+    setLocationError(null);
+    setActiveView("today");
+
+    loadWeather(
+      currentLocation.latitude,
+      currentLocation.longitude
+    );
   };
 
   const handleSearch = useCallback(async (city) => {
@@ -172,6 +194,8 @@ function App() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
+        setCurrentLocation({ latitude, longitude });
+        setIsCurrentLocation(true);
         setLocationLoading(false);
         await loadWeather(latitude, longitude);
       },
@@ -221,6 +245,9 @@ function App() {
           searchLoading={searchLoading}
           onSelectCity={handleSelectCity}
           locationName={weather?.location?.name}
+          onReturnToCurrentLocation={handleReturnToCurrentLocation}
+          isCurrentLocation={isCurrentLocation}
+          hasCurrentLocation={Boolean(currentLocation)}
           locationError={locationError}
           user={user}
           onAuthClick={() => setShowAuth(true)}
@@ -236,6 +263,8 @@ function App() {
           ) : activeView === "favorites" ? (
             <Favorites
               onSelectCity={(city) => {
+                setIsCurrentLocation(false);
+                setLocationError(null);
                 setActiveView("today");
                 loadWeather(city.latitude, city.longitude, city.name);
               }}
