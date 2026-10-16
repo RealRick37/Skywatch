@@ -4,7 +4,7 @@ import RevealText from "../ui/RevealText";
 import WeatherVisual from "./WeatherVisual";
 import MaskText from "../ui/MaskText";
 
-function WeatherHero({ weather, condition, night, user, isFavorite, favoriteLoading, onAddFavorite, onAuthClick }) {
+function WeatherHero({ weather, condition, night, user, isFavorite, favoriteLoading, favoriteError, onAddFavorite, onAuthClick}) {
   const heroRef = useRef(null);
   const { location, current, units } = weather;
 
@@ -80,6 +80,11 @@ function WeatherHero({ weather, condition, night, user, isFavorite, favoriteLoad
                   : "Add to Favorites"}
             </span>
           </button>
+          {favoriteError && (
+            <span className="weather-hero__favorite-error" role="alert">
+              {favoriteError}
+            </span>
+          )}
         </div>
 
         <div className="weather-hero__main">

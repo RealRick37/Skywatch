@@ -15,6 +15,11 @@ class FavoriteLocationSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields=["id", "created_at"]
+        extra_kwargs={
+            "country": {"required": False, "allow_blank": True},
+            "country_code": {"required": False, "allow_blank": True},
+            "timezone": {"required": False, "allow_blank": True},
+        }
 
     def validate_latitude(self, value):
         if not -90<=value<=90:
