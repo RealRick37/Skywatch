@@ -4,7 +4,7 @@ import FavoriteWeatherCard from "./FavoriteWeatherCard";
 import {deleteFavorite, getFavoriteWeather} from "../../services/weather";
 import "./Favorites.css";
 
-function Favorites({ onSelectCity }) {
+function Favorites({ onSelectCity, onFavoriteRemoved  }) {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,6 +34,7 @@ function Favorites({ onSelectCity }) {
       setFavorites((current) =>
         current.filter((favorite) => favorite.id !== id)
       );
+      onFavoriteRemoved?.(id);
     } catch (err) {
       console.error("Delete favorite error:", err);
     }
@@ -43,6 +44,7 @@ function Favorites({ onSelectCity }) {
     onSelectCity({
       name: favorite.name,
       country: favorite.country,
+      country_code: favorite.country_code,
       latitude: favorite.latitude,
       longitude: favorite.longitude,
     });

@@ -14,6 +14,15 @@ import AuthPage from "./components/auth/AuthPage";
 import { getCurrentUser } from "./services/auth";
 import DevSkySwitcher from "./components/dev/DevSkySwitcher";
 
+const COORD_TOLERANCE = 0.01;
+
+function isSameLocation(a, b) {
+  return (
+    Math.abs(Number(a.latitude) - Number(b.latitude)) < COORD_TOLERANCE &&
+    Math.abs(Number(a.longitude) - Number(b.longitude)) < COORD_TOLERANCE
+  );
+}
+
 function getLocationErrorMessage(error) {
   switch (error.code) {
     case 1:
@@ -50,13 +59,13 @@ function App() {
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [favoriteError, setFavoriteError] = useState(null);
 
-  const condition = skyOverride ?? getWeatherCondition(weather);
-  const night = nightOverride ?? isNight(weather);
-
   const [activeView, setActiveView] = useState("today");
 
   const [user, setUser] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
+
+  const condition = skyOverride ?? getWeatherCondition(weather);
+  const night = nightOverride ?? isNight(weather);
 
   const handleAuthenticated = async () => {
     const response = await getCurrentUser();
@@ -109,16 +118,12 @@ function App() {
   }, [user]);
 
   const handleAddFavorite = async () => {
-    if (!user || !weather) return;
+    if (!user || !weather || favoriteLoading) return;
 
     const location = weather.location;
 
-    if (favoriteLoading) return;
-
-    const alreadyFavorite = favoriteLocations.some(
-      (favorite) =>
-        Math.abs(Number(favorite.latitude) - Number(location.latitude)) < 0.0001 &&
-        Math.abs(Number(favorite.longitude) - Number(location.longitude)) < 0.0001
+    const alreadyFavorite = favoriteLocations.some((favorite) =>
+      isSameLocation(favorite, location)
     );
 
     if (alreadyFavorite) return;
@@ -136,30 +141,32 @@ function App() {
         timezone: location.timezone || "",
       });
 
-      setFavoriteLocations((previous) => [
-        ...previous,
-        response.data,
-      ]);
+      setFavoriteLocations((previous) => [...previous, response.data]);
     } catch (err) {
-        const data = err.response?.data;
-        console.error("Failed to add favorite:", data);
+      const data = err.response?.data;
+      console.error("Failed to add favorite:", data);
 
-        const firstFieldError =
-          data && typeof data === "object"
-            ? Object.values(data).flat()[0]
-            : null;
+      const firstFieldError =
+        data && typeof data === "object"
+          ? Object.values(data).flat()[0]
+          : null;
 
-        setFavoriteError(
-          data?.detail ||
-            firstFieldError ||
-            "Could not add this city to favorites. Please try again."
-        );
-      } finally {
+      setFavoriteError(
+        data?.detail ||
+          firstFieldError ||
+          "Could not add this city to favorites. Please try again."
+      );
+    } finally {
       setFavoriteLoading(false);
     }
   };
 
-  
+  const handleFavoriteRemoved = useCallback((id) => {
+    setFavoriteLocations((previous) =>
+      previous.filter((favorite) => favorite.id !== id)
+    );
+  }, []);
+
   const handleNavigate = (view) => {
     if (view === "favorites" && !user) {
       setShowAuth(true);
@@ -170,7 +177,6 @@ function App() {
     setActiveView(view);
     setSidebarOpen(false);
   };
-
 
   const loadWeather = useCallback(async (latitude, longitude, city) => {
     setWeatherLoading(true);
@@ -193,10 +199,14 @@ function App() {
       setWeather({
         ...data,
         location: {
-        ...data.location,
-        ...(name && { name }),
-        ...(country && { country }),
-        ...(countryCode && { country_code: countryCode }),
+          ...data.location,
+          // مختصات درخواستی، نه نقطه‌ی گردشده‌ی API،
+          // تا با علاقه‌مندی‌های ذخیره‌شده دقیقاً جور باشه
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+          ...(name && { name }),
+          ...(country && { country }),
+          ...(countryCode && { country_code: countryCode }),
         },
       });
     } catch (err) {
@@ -212,7 +222,7 @@ function App() {
     setLocationError(null);
     setIsCurrentLocation(false);
     setActiveView("today");
-    loadWeather(city.latitude, city.longitude, name);
+    loadWeather(city.latitude, city.longitude, city);
   };
 
   const handleReturnToCurrentLocation = () => {
@@ -225,10 +235,7 @@ function App() {
     setLocationError(null);
     setActiveView("today");
 
-    loadWeather(
-      currentLocation.latitude,
-      currentLocation.longitude
-    );
+    loadWeather(currentLocation.latitude, currentLocation.longitude);
   };
 
   const handleSearch = useCallback(async (city) => {
@@ -302,10 +309,8 @@ function App() {
   }
 
   const isFavorite = weather
-    ? favoriteLocations.some(
-        (favorite) =>
-          Math.abs(Number(favorite.latitude) - Number(weather.location.latitude)) < 0.0001 &&
-          Math.abs(Number(favorite.longitude) - Number(weather.location.longitude)) < 0.0001
+    ? favoriteLocations.some((favorite) =>
+        isSameLocation(favorite, weather.location)
       )
     : false;
 
@@ -355,15 +360,15 @@ function App() {
             />
           ) : activeView === "favorites" ? (
             <Favorites
+              onFavoriteRemoved={handleFavoriteRemoved}
               onSelectCity={(city) => {
                 setIsCurrentLocation(false);
                 setLocationError(null);
                 setActiveView("today");
-                loadWeather(city.latitude, city.longitude, name);
+                loadWeather(city.latitude, city.longitude, city);
               }}
             />
-          ) 
-          : weather ? (
+          ) : weather ? (
             <>
               <WeatherHero
                 weather={weather}
