@@ -34,7 +34,9 @@ function Sidebar({ isOpen, onToggle, activeView, onNavigate }) {
         <SidebarItem
           icon={<Map />}
           label="Weather map"
+          active={activeView === "map"}
           isOpen={isOpen}
+          onClick={() => onNavigate("map")}
         />
       </nav>
 
