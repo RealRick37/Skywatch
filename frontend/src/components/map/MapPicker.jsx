@@ -34,7 +34,6 @@ export default function MapPicker({
   initialPosition = [40.4093, 49.8671],
 }) {
   const [position, setPosition] = useState(null);
-  const selectedPosition = position ?? initialPosition;
 
   return (
     <section className="map-picker">
@@ -76,7 +75,9 @@ export default function MapPicker({
         <button
           className="map-picker__button"
           disabled={!position}
-          onClick={() => onSelectLocation(position)}
+          onClick={() => {
+            onSelectLocation(position);
+          }}
         >
           Get weather here
         </button>
