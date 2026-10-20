@@ -13,6 +13,7 @@ import { getWeatherCondition, isNight } from "./utils/weather";
 import AuthPage from "./components/auth/AuthPage";
 import { getCurrentUser } from "./services/auth";
 import DevSkySwitcher from "./components/dev/DevSkySwitcher";
+import MapPicker from "./components/map/MapPicker";
 
 const COORD_TOLERANCE = 0.01;
 
@@ -200,8 +201,6 @@ function App() {
         ...data,
         location: {
           ...data.location,
-          // مختصات درخواستی، نه نقطه‌ی گردشده‌ی API،
-          // تا با علاقه‌مندی‌های ذخیره‌شده دقیقاً جور باشه
           latitude: Number(latitude),
           longitude: Number(longitude),
           ...(name && { name }),
@@ -368,6 +367,20 @@ function App() {
                 loadWeather(city.latitude, city.longitude, city);
               }}
             />
+            ) : activeView === "map" ? (
+              <MapPicker
+                initialPosition={
+                  currentLocation
+                    ? [currentLocation.latitude, currentLocation.longitude]
+                    : [40.4093, 49.8671]
+                }
+                onSelectLocation={({ latitude, longitude }) => {
+                  setIsCurrentLocation(false);
+                  setLocationError(null);
+                  setActiveView("today");
+                  loadWeather(latitude, longitude);
+                }}
+              />
           ) : weather ? (
             <>
               <WeatherHero
