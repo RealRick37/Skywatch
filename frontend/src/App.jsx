@@ -14,6 +14,8 @@ import AuthPage from "./components/auth/AuthPage";
 import { getCurrentUser } from "./services/auth";
 import DevSkySwitcher from "./components/dev/DevSkySwitcher";
 import MapPicker from "./components/map/MapPicker";
+import { Routes, Route } from "react-router-dom";
+import NotFound from "./components/errors/NotFound";
 
 const COORD_TOLERANCE = 0.01;
 
@@ -37,7 +39,7 @@ function getLocationErrorMessage(error) {
   }
 }
 
-function App() {
+function WeatherApp() {
   const [weather, setWeather] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -406,6 +408,15 @@ function App() {
         </main>
       </div>
     </>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<WeatherApp />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
