@@ -16,6 +16,7 @@ import DevSkySwitcher from "./components/dev/DevSkySwitcher";
 import MapPicker from "./components/map/MapPicker";
 import { Routes, Route } from "react-router-dom";
 import NotFound from "./components/errors/NotFound";
+import WeatherState from "./components/common/WeatherState";
 
 const COORD_TOLERANCE = 0.01;
 
@@ -43,6 +44,8 @@ function WeatherApp() {
   const [weather, setWeather] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const [lastWeatherRequest, setLastWeatherRequest] = useState(null);
 
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -182,6 +185,7 @@ function WeatherApp() {
   };
 
   const loadWeather = useCallback(async (latitude, longitude, city) => {
+    setLastWeatherRequest({ latitude, longitude, city });
     setWeatherLoading(true);
     setError(null);
     setFavoriteError(null);
@@ -401,10 +405,29 @@ function WeatherApp() {
               <WeatherDetails weather={weather} />
             </>
           ) : weatherLoading ? (
-            <div>Loading weather...</div>
-          ) : (
-            <div>{error ?? locationError}</div>
-          )}
+              <WeatherState type="loading" />
+            ) : error ? (
+              <WeatherState
+                type="error"
+                message={error}
+                onRetry={
+                  lastWeatherRequest
+                    ? () =>
+                        loadWeather(
+                          lastWeatherRequest.latitude,
+                          lastWeatherRequest.longitude,
+                          lastWeatherRequest.city
+                        )
+                    : undefined
+                }
+              />
+            ) : locationError ? (
+              <WeatherState
+                type="error"
+                title="Location unavailable"
+                message={locationError}
+              />
+            ) : null}
         </main>
       </div>
     </>
