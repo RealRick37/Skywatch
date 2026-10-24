@@ -1,7 +1,7 @@
 import {Droplets, MapPin, Trash2, Wind} from "lucide-react";
 import { getWeatherVisual } from "../weather/WeatherVisual";
 
-function FavoriteWeatherCard({ favorite, onDelete, onSelect }) {
+function FavoriteWeatherCard({ favorite, onDelete, onSelect, isDeleting }) {
   const { weather, units } = favorite;
   const visual = getWeatherVisual(weather.weather_code);
 
@@ -27,6 +27,7 @@ function FavoriteWeatherCard({ favorite, onDelete, onSelect }) {
         <button
           type="button"
           className="favorite-card__delete"
+          disabled={isDeleting}
           onClick={(event) => {
             event.stopPropagation();
             onDelete(favorite.id);

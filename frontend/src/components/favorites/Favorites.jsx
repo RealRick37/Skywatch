@@ -8,6 +8,8 @@ function Favorites({ onSelectCity, onFavoriteRemoved  }) {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [deletingIds, setDeletingIds] = useState([]);
 
   const loadFavorites = async () => {
     setLoading(true);
@@ -29,14 +31,26 @@ function Favorites({ onSelectCity, onFavoriteRemoved  }) {
   }, []);
 
   const handleDelete = async (id) => {
+    if (deletingIds.includes(id)) return;
+
+    setDeleteError("");
+    setDeletingIds((current) => [...current, id]);
+
     try {
       await deleteFavorite(id);
+
       setFavorites((current) =>
         current.filter((favorite) => favorite.id !== id)
       );
+
       onFavoriteRemoved?.(id);
     } catch (err) {
       console.error("Delete favorite error:", err);
+      setDeleteError("Failed to remove this location. Please try again.");
+    } finally {
+      setDeletingIds((current) =>
+        current.filter((favoriteId) => favoriteId !== id)
+      );
     }
   };
 
@@ -69,6 +83,15 @@ function Favorites({ onSelectCity, onFavoriteRemoved  }) {
           <Star size={22} />
         </div>
       </header>
+
+      {deleteError && (
+        <div
+          className="favorites-page__state favorites-page__state--error"
+          role="alert"
+        >
+          <p>{deleteError}</p>
+        </div>
+      )}
 
       {loading && (
         <div className="favorites-page__state">
@@ -116,6 +139,7 @@ function Favorites({ onSelectCity, onFavoriteRemoved  }) {
                 favorite={favorite}
                 onDelete={handleDelete}
                 onSelect={handleSelect}
+                isDeleting={deletingIds.includes(favorite.id)}
               />
             ))}
         </div>

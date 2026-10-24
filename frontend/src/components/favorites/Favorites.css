@@ -191,6 +191,11 @@
   color: #ff8585;
 }
 
+.favorite-card__delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .favorite-card__weather {
   justify-content: flex-start;
   margin: 30px 0 26px;
