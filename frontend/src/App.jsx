@@ -305,9 +305,7 @@ function WeatherApp() {
     );
   }, [loadWeather]);
 
-  if (locationLoading) {
-    return <div>Detecting your location...</div>;
-  }
+  
 
   const isFavorite = weather
     ? favoriteLocations.some((favorite) =>
@@ -383,6 +381,8 @@ function WeatherApp() {
                   loadWeather(latitude, longitude);
                 }}
               />
+              ) : locationLoading ? (
+                <div>Detecting your location...</div>
           ) : weather ? (
             <>
               <WeatherHero
