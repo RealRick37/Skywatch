@@ -371,22 +371,43 @@ function WeatherApp() {
                 loadWeather(city.latitude, city.longitude, city);
               }}
             />
-            ) : activeView === "map" ? (
-              <MapPicker
-                initialPosition={
-                  currentLocation
-                    ? [currentLocation.latitude, currentLocation.longitude]
-                    : [40.4093, 49.8671]
-                }
-                onSelectLocation={({ latitude, longitude }) => {
-                  setIsCurrentLocation(false);
-                  setLocationError(null);
-                  setActiveView("today");
-                  loadWeather(latitude, longitude);
-                }}
-              />
-              ) : locationLoading ? (
-                <div>Detecting your location...</div>
+          ) : activeView === "map" ? (
+            <MapPicker
+              initialPosition={
+                currentLocation
+                  ? [currentLocation.latitude, currentLocation.longitude]
+                  : [40.4093, 49.8671]
+              }
+              onSelectLocation={({ latitude, longitude }) => {
+                setIsCurrentLocation(false);
+                setLocationError(null);
+                setActiveView("today");
+                loadWeather(latitude, longitude);
+              }}
+            />
+          ) : locationLoading ? (
+            <WeatherState
+              type="loading"
+              title="Finding your location..."
+              message="Getting your local weather ready."
+            />
+          ) : weatherLoading ? (
+            <WeatherState type="loading" />
+          ) : error ? (
+            <WeatherState
+              type="error"
+              message={error}
+              onRetry={
+                lastWeatherRequest
+                  ? () =>
+                      loadWeather(
+                        lastWeatherRequest.latitude,
+                        lastWeatherRequest.longitude,
+                        lastWeatherRequest.city
+                      )
+                  : undefined
+              }
+            />
           ) : weather ? (
             <>
               <WeatherHero
@@ -404,30 +425,13 @@ function WeatherApp() {
               <DailyForecast weather={weather} />
               <WeatherDetails weather={weather} />
             </>
-          ) : weatherLoading ? (
-              <WeatherState type="loading" />
-            ) : error ? (
-              <WeatherState
-                type="error"
-                message={error}
-                onRetry={
-                  lastWeatherRequest
-                    ? () =>
-                        loadWeather(
-                          lastWeatherRequest.latitude,
-                          lastWeatherRequest.longitude,
-                          lastWeatherRequest.city
-                        )
-                    : undefined
-                }
-              />
-            ) : locationError ? (
-              <WeatherState
-                type="error"
-                title="Location unavailable"
-                message={locationError}
-              />
-            ) : null}
+          ) : locationError ? (
+            <WeatherState
+              type="error"
+              title="Location unavailable"
+              message={locationError}
+            />
+          ) : null}
         </main>
       </div>
     </>
