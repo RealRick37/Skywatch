@@ -1,5 +1,5 @@
 import './App.css'
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import Navbar from "./components/layout/Navbar";
 import Sidebar from "./components/layout/Sidebar";
 import WeatherHero from "./components/weather/WeatherHero";
@@ -243,22 +243,36 @@ function WeatherApp() {
     loadWeather(currentLocation.latitude, currentLocation.longitude);
   };
 
+  
+  const searchRequestId = useRef(0);
+
   const handleSearch = useCallback(async (city) => {
-    if (!city) {
+    const requestId = ++searchRequestId.current;
+    const query = city.trim();
+
+    if (!query) {
       setSearchResults([]);
+      setSearchLoading(false);
       return;
     }
 
     setSearchLoading(true);
 
     try {
-      const response = await searchCity(city);
+      const response = await searchCity(query);
+
+      if (requestId !== searchRequestId.current) return;
+
       setSearchResults(response.data.results ?? []);
     } catch (err) {
+      if (requestId !== searchRequestId.current) return;
+
       console.error("City search error:", err);
       setSearchResults([]);
     } finally {
-      setSearchLoading(false);
+      if (requestId === searchRequestId.current) {
+        setSearchLoading(false);
+      }
     }
   }, []);
 
@@ -309,7 +323,7 @@ function WeatherApp() {
     );
   }, [loadWeather]);
 
-  
+
 
   const isFavorite = weather
     ? favoriteLocations.some((favorite) =>
