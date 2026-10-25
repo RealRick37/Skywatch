@@ -12,7 +12,6 @@ import { getWeather, searchCity, reverseGeocode, getFavoriteWeather, addFavorite
 import { getWeatherCondition, isNight } from "./utils/weather";
 import AuthPage from "./components/auth/AuthPage";
 import { getCurrentUser } from "./services/auth";
-import DevSkySwitcher from "./components/dev/DevSkySwitcher";
 import MapPicker from "./components/map/MapPicker";
 import { Routes, Route } from "react-router-dom";
 import NotFound from "./components/errors/NotFound";
@@ -335,15 +334,6 @@ function WeatherApp() {
   return (
     <>
       <SkyBackground condition={condition} night={night} />
-
-      {import.meta.env.DEV && (
-        <DevSkySwitcher
-          sky={skyOverride}
-          night={nightOverride}
-          onSky={setSkyOverride}
-          onNight={setNightOverride}
-        />
-      )}
 
       <Sidebar
         isOpen={sidebarOpen}
