@@ -17,6 +17,7 @@ import MapPicker from "./components/map/MapPicker";
 import { Routes, Route } from "react-router-dom";
 import NotFound from "./components/errors/NotFound";
 import WeatherState from "./components/common/WeatherState";
+import LoadingScreen from "./components/common/LoadingScreen";
 
 const COORD_TOLERANCE = 0.01;
 
@@ -399,11 +400,13 @@ function WeatherApp() {
                 loadWeather(latitude, longitude);
               }}
             />
-          ) : locationLoading ? (
-            <WeatherState
-              type="loading"
-              title="Finding your location..."
-              message="Getting your local weather ready."
+          ) : locationLoading || (weatherLoading && !weather) ? (
+            <LoadingScreen
+              message={
+                locationLoading
+                  ? "Finding your location..."
+                  : "Getting your local weather ready."
+              }
             />
           ) : weatherLoading ? (
             <WeatherState type="loading" />
