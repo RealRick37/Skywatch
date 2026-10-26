@@ -3,7 +3,7 @@
 
   # Skywatch
 
-  **Look up. Stay ahead.**
+  **Keep your eyes on the sky.**
 
   A modern weather application built with Django and React, designed to make checking the weather intuitive, informative, and visually engaging.
 
@@ -166,9 +166,6 @@ Skywatch/
 
 ---
 
-<div align="center">
-  **Skywatch — Keep your eyes on the sky.**
-</div>
 
 ## What's Next?
 
@@ -177,4 +174,3 @@ Skywatch/
 Version 1.0.0 is just the beginning. More features, improvements, and updates are on the horizon.
 
 Stay tuned. The watch continues.
-
