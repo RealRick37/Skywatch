@@ -1,5 +1,5 @@
 import './App.css'
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import Navbar from "./components/layout/Navbar";
 import Sidebar from "./components/layout/Sidebar";
 import WeatherHero from "./components/weather/WeatherHero";
@@ -12,8 +12,11 @@ import { getWeather, searchCity, reverseGeocode, getFavoriteWeather, addFavorite
 import { getWeatherCondition, isNight } from "./utils/weather";
 import AuthPage from "./components/auth/AuthPage";
 import { getCurrentUser } from "./services/auth";
-import DevSkySwitcher from "./components/dev/DevSkySwitcher";
 import MapPicker from "./components/map/MapPicker";
+import { Routes, Route } from "react-router-dom";
+import NotFound from "./components/errors/NotFound";
+import WeatherState from "./components/common/WeatherState";
+import LoadingScreen from "./components/common/LoadingScreen";
 
 const COORD_TOLERANCE = 0.01;
 
@@ -37,10 +40,12 @@ function getLocationErrorMessage(error) {
   }
 }
 
-function App() {
+function WeatherApp() {
   const [weather, setWeather] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const [lastWeatherRequest, setLastWeatherRequest] = useState(null);
 
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -180,6 +185,7 @@ function App() {
   };
 
   const loadWeather = useCallback(async (latitude, longitude, city) => {
+    setLastWeatherRequest({ latitude, longitude, city });
     setWeatherLoading(true);
     setError(null);
     setFavoriteError(null);
@@ -237,22 +243,36 @@ function App() {
     loadWeather(currentLocation.latitude, currentLocation.longitude);
   };
 
+  
+  const searchRequestId = useRef(0);
+
   const handleSearch = useCallback(async (city) => {
-    if (!city) {
+    const requestId = ++searchRequestId.current;
+    const query = city.trim();
+
+    if (!query) {
       setSearchResults([]);
+      setSearchLoading(false);
       return;
     }
 
     setSearchLoading(true);
 
     try {
-      const response = await searchCity(city);
+      const response = await searchCity(query);
+
+      if (requestId !== searchRequestId.current) return;
+
       setSearchResults(response.data.results ?? []);
     } catch (err) {
+      if (requestId !== searchRequestId.current) return;
+
       console.error("City search error:", err);
       setSearchResults([]);
     } finally {
-      setSearchLoading(false);
+      if (requestId === searchRequestId.current) {
+        setSearchLoading(false);
+      }
     }
   }, []);
 
@@ -303,9 +323,7 @@ function App() {
     );
   }, [loadWeather]);
 
-  if (locationLoading) {
-    return <div>Detecting your location...</div>;
-  }
+
 
   const isFavorite = weather
     ? favoriteLocations.some((favorite) =>
@@ -316,15 +334,6 @@ function App() {
   return (
     <>
       <SkyBackground condition={condition} night={night} />
-
-      {import.meta.env.DEV && (
-        <DevSkySwitcher
-          sky={skyOverride}
-          night={nightOverride}
-          onSky={setSkyOverride}
-          onNight={setNightOverride}
-        />
-      )}
 
       <Sidebar
         isOpen={sidebarOpen}
@@ -367,20 +376,45 @@ function App() {
                 loadWeather(city.latitude, city.longitude, city);
               }}
             />
-            ) : activeView === "map" ? (
-              <MapPicker
-                initialPosition={
-                  currentLocation
-                    ? [currentLocation.latitude, currentLocation.longitude]
-                    : [40.4093, 49.8671]
-                }
-                onSelectLocation={({ latitude, longitude }) => {
-                  setIsCurrentLocation(false);
-                  setLocationError(null);
-                  setActiveView("today");
-                  loadWeather(latitude, longitude);
-                }}
-              />
+          ) : activeView === "map" ? (
+            <MapPicker
+              initialPosition={
+                currentLocation
+                  ? [currentLocation.latitude, currentLocation.longitude]
+                  : [40.4093, 49.8671]
+              }
+              onSelectLocation={({ latitude, longitude }) => {
+                setIsCurrentLocation(false);
+                setLocationError(null);
+                setActiveView("today");
+                loadWeather(latitude, longitude);
+              }}
+            />
+          ) : locationLoading || (weatherLoading && !weather) ? (
+            <LoadingScreen
+              message={
+                locationLoading
+                  ? "Finding your location..."
+                  : "Getting your local weather ready."
+              }
+            />
+          ) : weatherLoading ? (
+            <WeatherState type="loading" />
+          ) : error ? (
+            <WeatherState
+              type="error"
+              message={error}
+              onRetry={
+                lastWeatherRequest
+                  ? () =>
+                      loadWeather(
+                        lastWeatherRequest.latitude,
+                        lastWeatherRequest.longitude,
+                        lastWeatherRequest.city
+                      )
+                  : undefined
+              }
+            />
           ) : weather ? (
             <>
               <WeatherHero
@@ -398,14 +432,25 @@ function App() {
               <DailyForecast weather={weather} />
               <WeatherDetails weather={weather} />
             </>
-          ) : weatherLoading ? (
-            <div>Loading weather...</div>
-          ) : (
-            <div>{error ?? locationError}</div>
-          )}
+          ) : locationError ? (
+            <WeatherState
+              type="error"
+              title="Location unavailable"
+              message={locationError}
+            />
+          ) : null}
         </main>
       </div>
     </>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<WeatherApp />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 

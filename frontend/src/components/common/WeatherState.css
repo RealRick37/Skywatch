@@ -1,0 +1,81 @@
+.weather-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 280px;
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--text-primary, #f1f5f9);
+}
+
+.weather-state__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 1px solid rgb(148 163 184 / 20%);
+  border-radius: 50%;
+  background: rgb(148 163 184 / 8%);
+  color: var(--text-secondary, #94a3b8);
+}
+
+.weather-state__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.weather-state__message {
+  max-width: 420px;
+  margin: 0;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.7;
+}
+
+.weather-state__retry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 16px;
+  border: 1px solid rgb(148 163 184 / 25%);
+  border-radius: 10px;
+  background: rgb(148 163 184 / 8%);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.weather-state__retry:hover {
+  background: rgb(148 163 184 / 16%);
+  border-color: rgb(148 163 184 / 45%);
+}
+
+.weather-state__retry:focus-visible {
+  outline: 2px solid #7dd3fc;
+  outline-offset: 3px;
+}
+
+.weather-state__spinner {
+  animation: weather-state-spin 1.2s linear infinite;
+}
+
+@keyframes weather-state-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .weather-state__spinner {
+    animation-duration: 3s;
+  }
+
+  .weather-state__retry {
+    transition: none;
+  }
+}
