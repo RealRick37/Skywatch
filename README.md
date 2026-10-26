@@ -11,7 +11,7 @@
   ![Python](https://img.shields.io/badge/Python-3.14+-3776AB?logo=python&logoColor=white)
   ![Django](https://img.shields.io/badge/Django-6.x-092E20?logo=django&logoColor=white)
   ![React](https://img.shields.io/badge/React-Vite-61DAFB?logo=react&logoColor=black)
-  ![License](https://img.shields.io/badge/license-TBD-lightgrey)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 </div>
 
 ---
