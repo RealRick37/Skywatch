@@ -36,6 +36,7 @@ Because apparently, even checking the weather deserves a proper release announce
 
 ## Screenshots
 
+
 ## Features
 
 - **City Search** — Search for cities and explore weather conditions at different locations.
