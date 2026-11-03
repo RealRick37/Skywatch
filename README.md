@@ -49,7 +49,7 @@ Because apparently, even checking the weather deserves a proper release announce
 
 ![Weather Effects Showcase](docs/images/weather-visuals.webp)
 
-[Explore all weather effects →](docs/images/weather-effects/)
+[Explore some of the weather effects →](docs/images/weather-effects/)
 
 ### Favorites
 
