@@ -33,6 +33,15 @@ Skywatch is a full-stack weather app built with Django and React, bringing forec
 
 Because apparently, even checking the weather deserves a proper release announcement.
 
+## Demo
+
+### Home Dashboard
+
+![Skywatch Home](docs/images/home-demo.gif)
+
+### City Search
+
+![Skywatch City Search](docs/images/city-search-demo.gif)
 
 ## Screenshots
 
