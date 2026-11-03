@@ -45,6 +45,20 @@ Because apparently, even checking the weather deserves a proper release announce
 
 ## Screenshots
 
+### Weather Effects
+
+![Weather Effects Showcase](docs/images/weather-visuals.webp)
+
+[Explore all weather effects →](docs/images/weather-effects/)
+
+### Favorites
+
+![Skywatch Favorites](docs/images/favorites.webp)
+
+### Map Picker
+
+![Skywatch Map Picker](docs/images/map-picker.webp)
+
 
 ## Features
 
