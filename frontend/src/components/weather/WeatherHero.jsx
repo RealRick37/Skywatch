@@ -1,10 +1,10 @@
 import { useRef } from "react";
-import { Droplets, Eye, Gauge, MapPin, Wind, Check, Star   } from "lucide-react";
+import { Droplets, Eye, Gauge, MapPin, Wind, Check, Star, RefreshCw} from "lucide-react";
 import RevealText from "../ui/RevealText";
 import WeatherVisual from "./WeatherVisual";
 import MaskText from "../ui/MaskText";
 
-function WeatherHero({ weather, condition, night, user, isFavorite, favoriteLoading, favoriteError, onAddFavorite, onAuthClick}) {
+function WeatherHero({ weather, condition, night, user, isFavorite, favoriteLoading, favoriteError, onAddFavorite, onAuthClick, onRefresh, refreshLoading, lastUpdated}) {
   const heroRef = useRef(null);
   const { location, current, units } = weather;
 
@@ -50,6 +50,20 @@ function WeatherHero({ weather, condition, night, user, isFavorite, favoriteLoad
           <RevealText delay={150}>{locationLabel}</RevealText>
           <button
             type="button"
+            className="weather-hero__refresh"
+            onClick={onRefresh}
+            disabled={refreshLoading}
+            aria-label="Refresh weather"
+            title="Refresh weather"
+          >
+            <RefreshCw
+              size={15}
+              className={refreshLoading ? "is-spinning" : ""}
+            />
+            <span>{refreshLoading ? "Updating..." : "Refresh"}</span>
+          </button>
+          <button
+            type="button"
             className={`weather-hero__favorite ${
               isFavorite ? "weather-hero__favorite--added" : ""
             }`}
@@ -86,6 +100,15 @@ function WeatherHero({ weather, condition, night, user, isFavorite, favoriteLoad
             </span>
           )}
         </div>
+
+        {lastUpdated && (
+          <p className="weather-hero__updated">
+            Last updated: {lastUpdated.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
+        )}
 
         <div className="weather-hero__main">
           <WeatherVisual weatherCode={current.weather_code} />

@@ -440,7 +440,19 @@ function WeatherApp() {
               type="error"
               title="Location unavailable"
               message={locationError}
-            />
+            
+            onRefresh={() => {
+              if (lastWeatherRequest) {
+                loadWeather(
+                  lastWeatherRequest.latitude,
+                  lastWeatherRequest.longitude,
+                  lastWeatherRequest.city
+                );
+              }
+            }}
+            refreshLoading={weatherLoading}
+            lastUpdated={lastUpdated}
+          />
           ) : null}
         </main>
       </div>
