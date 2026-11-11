@@ -44,6 +44,7 @@ function WeatherApp() {
   const [weather, setWeather] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   const [lastWeatherRequest, setLastWeatherRequest] = useState(null);
 
@@ -214,6 +215,8 @@ function WeatherApp() {
           ...(countryCode && { country_code: countryCode }),
         },
       });
+
+      setLastUpdated(new Date());
     } catch (err) {
       console.error("Weather API error:", err);
       setError("Failed to load weather data.");
@@ -398,9 +401,9 @@ function WeatherApp() {
                   : "Getting your local weather ready."
               }
             />
-          ) : weatherLoading ? (
-            <WeatherState type="loading" />
-          ) : error ? (
+          ) : weatherLoading && !weather ? (
+            <LoadingScreen message="Getting your local weather ready." />
+          ) : error && weather ? (
             <WeatherState
               type="error"
               message={error}
