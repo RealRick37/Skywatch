@@ -430,6 +430,17 @@ function WeatherApp() {
                 favoriteError={favoriteError}
                 onAddFavorite={handleAddFavorite}
                 onAuthClick={() => setShowAuth(true)}
+                onRefresh={() => {
+                if (lastWeatherRequest) {
+                  loadWeather(
+                    lastWeatherRequest.latitude,
+                    lastWeatherRequest.longitude,
+                    lastWeatherRequest.city
+                  );
+                }
+              }}
+              refreshLoading={weatherLoading}
+              lastUpdated={lastUpdated}
               />
               <HourlyForecast weather={weather} />
               <DailyForecast weather={weather} />
