@@ -7,7 +7,7 @@
 
   A modern weather application built with Django and React, designed to make checking the weather intuitive, informative, and visually engaging.
 
-  ![Version](https://img.shields.io/badge/version-1.0.0--dev-blue)
+  ![Version](https://img.shields.io/badge/version-1.1.0-blue)
   ![Python](https://img.shields.io/badge/Python-3.14+-3776AB?logo=python&logoColor=white)
   ![Django](https://img.shields.io/badge/Django-6.x-092E20?logo=django&logoColor=white)
   ![React](https://img.shields.io/badge/React-Vite-61DAFB?logo=react&logoColor=black)
@@ -64,6 +64,7 @@ Because apparently, even checking the weather deserves a proper release announce
 
 - **City Search** — Search for cities and explore weather conditions at different locations.
 - **Current Weather** — Get detailed weather information, including temperature, feels-like temperature, humidity, wind speed, atmospheric pressure, visibility, UV index, and precipitation.
+- **Manual Weather Refresh** — Refresh weather data on demand, with loading indicators, last updated timestamps, and graceful error handling that preserves previously loaded data.
 - **Hourly Forecast** — Check upcoming temperatures, weather conditions, precipitation probability, and wind speed.
 - **7-Day Forecast** — Plan ahead with daily high and low temperatures, weather conditions, precipitation, and maximum wind speed.
 - **Favorite Locations** — Save your favorite cities for quick access and remove them whenever you want.
@@ -94,6 +95,17 @@ Because apparently, even checking the weather deserves a proper release announce
 ### Weather Data
 - [Open-Meteo](https://open-meteo.com/) — Weather forecasts and weather data.
 - Open-Meteo geocoding services — City search and location lookup.
+
+
+## Testing
+
+The backend includes API and service tests for authentication, weather data, city search, and favorite locations.
+
+Run the backend test suite with:
+
+```powershell
+python manage.py test
+```
 
 ## Getting Started
 
@@ -197,6 +209,9 @@ Skywatch/
 
 **Skywatch isn't done yet.**
 
-Version 1.0.0 is just the beginning. More features, improvements, and updates are on the horizon.
+~~Version 1.0.0 is just the beginning.~~
+Version 1.1.0 is here, and the journey continues.
+
+More features, improvements, and updates are on the horizon.
 
 Stay tuned. The watch continues.
