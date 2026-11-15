@@ -3,9 +3,10 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .services import WeatherService, GeocodingService
-from .serializers import FavoriteLocationSerializer
+from .serializers import FavoriteLocationSerializer ,WeatherComparisonSerializer
 from .models import FavoriteLocation
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from concurrent.futures import ThreadPoolExecutor
 
 # Create your views here.
 
@@ -85,6 +86,45 @@ class CityWeatherAPIView(APIView):
         weather["location"]["country_code"]=city["country_code"]
 
         return Response(weather)
+
+
+
+class WeatherComparisonAPIView(APIView):
+    def post(self, request):
+        serializer=WeatherComparisonSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        locations=serializer.validated_data["locations"]
+
+        def fetch_weather(location):
+            try:
+                weather=WeatherService.get_weather(latitude=location["latitude"], longitude=location["longitude"])
+                weather["location"].update({
+                    "name": location["name"],
+                    "country": location.get("country", ""),
+                    "country_code": location.get("country_code", ""),
+                    "timezone": location.get(
+                        "timezone",
+                        weather["location"]["timezone"])})
+
+                return {
+                    "location": weather["location"],
+                    "current": weather["current"],
+                    "units": weather["units"]}
+
+            except RuntimeError as exc:
+                return {
+                    "location": {
+                        "name": location["name"],
+                        "country": location.get("country", ""),
+                        "latitude": location["latitude"],
+                        "longitude": location["longitude"]},
+                        "error": str(exc)}
+
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            results=list(executor.map(fetch_weather, locations))
+
+        return Response({"results": results})
+
 
 
 class FavoriteLocationAPIView(APIView):
