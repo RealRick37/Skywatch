@@ -90,6 +90,17 @@ class CityWeatherAPIView(APIView):
 
 
 class WeatherComparisonAPIView(APIView):
+    @extend_schema(
+        summary="Compare weather across multiple locations",
+        description=("Returns current weather information for 2 to 4 locations. " "Weather data is fetched concurrently."),
+        request=WeatherComparisonSerializer,
+        responses={
+            200: {
+                "type": "object",
+                "properties": {
+                    "results": {
+                        "type": "array",
+                        "items": {"type": "object"}}}}})
     def post(self, request):
         serializer=WeatherComparisonSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
