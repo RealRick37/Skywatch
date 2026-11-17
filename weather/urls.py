@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (WeatherAPIView, CitySearchAPIView, CityWeatherAPIView, FavoriteLocationAPIView, FavoriteLocationDetailAPIView
-                ,FavoriteLocationsWeatherAPIView)
+                ,FavoriteLocationsWeatherAPIView, WeatherComparisonAPIView)
 
 urlpatterns = [
     path("", WeatherAPIView.as_view(), name="weather"),
@@ -9,4 +9,5 @@ urlpatterns = [
     path("favorites/", FavoriteLocationAPIView.as_view(),name="favorite-list-create"),
     path("favorites/<int:pk>/", FavoriteLocationDetailAPIView.as_view(),name="favorite-detail"),
     path("favorites/weather/", FavoriteLocationsWeatherAPIView.as_view(), name="favorite-locations-weather"),
+    path("compare/", WeatherComparisonAPIView.as_view(), name="weather-compare"),
 ]
