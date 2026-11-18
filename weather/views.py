@@ -7,6 +7,7 @@ from .serializers import FavoriteLocationSerializer ,WeatherComparisonSerializer
 from .models import FavoriteLocation
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from concurrent.futures import ThreadPoolExecutor
+import copy
 
 # Create your views here.
 
@@ -109,18 +110,20 @@ class WeatherComparisonAPIView(APIView):
         def fetch_weather(location):
             try:
                 weather=WeatherService.get_weather(latitude=location["latitude"], longitude=location["longitude"])
-                weather["location"].update({
+
+                weather_location=copy.deepcopy(weather["location"])
+                weather_location.update({
                     "name": location["name"],
                     "country": location.get("country", ""),
                     "country_code": location.get("country_code", ""),
-                    "timezone": location.get(
-                        "timezone",
-                        weather["location"]["timezone"])})
+                    "timezone": location.get("timezone", weather_location.get("timezone", ""))
+                })
 
                 return {
-                    "location": weather["location"],
+                    "location": weather_location,
                     "current": weather["current"],
-                    "units": weather["units"]}
+                    "units": weather["units"]
+                }
 
             except RuntimeError as exc:
                 return {
@@ -128,9 +131,10 @@ class WeatherComparisonAPIView(APIView):
                         "name": location["name"],
                         "country": location.get("country", ""),
                         "latitude": location["latitude"],
-                        "longitude": location["longitude"]},
-                        "error": str(exc)}
-
+                        "longitude": location["longitude"]
+                    },
+                    "error": str(exc)}
+                    
         with ThreadPoolExecutor(max_workers=4) as executor:
             results=list(executor.map(fetch_weather, locations))
 

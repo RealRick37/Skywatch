@@ -1,5 +1,4 @@
 from unittest.mock import Mock, patch
-
 import httpx
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -644,3 +643,95 @@ class FavoriteLocationsWeatherAPITests(APITestCase):
         self.assertEqual(
             response.status_code, status.HTTP_401_UNAUTHORIZED
         )
+
+
+
+class WeatherComparisonAPITests(APITestCase):
+    def setUp(self):
+        self.url=reverse("weather-compare")
+        self.locations=[
+            {
+                "name": "Rasht",
+                "latitude": 37.2761,
+                "longitude": 49.5886,
+                "country": "Iran",
+                "country_code": "IR",
+                "timezone": "Asia/Tehran",
+            },
+            {
+                "name": "London",
+                "latitude": 51.5072,
+                "longitude": -0.1276,
+                "country": "United Kingdom",
+                "country_code": "GB",
+                "timezone": "Europe/London",
+            },
+        ]
+
+        self.mock_weather={
+            "location": {
+                "latitude": 37.2761,
+                "longitude": 49.5886,
+                "timezone": "Asia/Tehran",
+            },
+            "current": {
+                "temperature": 18.5,
+                "feels_like": 17.2,
+                "humidity": 72,
+                "wind_speed": 12.4,
+                "weather_code": 3,
+                "condition": "Overcast",
+            },
+            "units": {
+                "temperature": "°C",
+                "feels_like": "°C",
+                "humidity": "%",
+                "wind_speed": "km/h",
+            },
+        }
+
+    @patch("weather.views.WeatherService.get_weather")
+    def test_compare_weather_success(self, mock_get_weather):
+        mock_get_weather.return_value=self.mock_weather
+        response=self.client.post(self.url, {"locations": self.locations}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 2)
+        self.assertEqual(mock_get_weather.call_count, 2)
+        first_result=response.data["results"][0]
+        self.assertEqual(first_result["location"]["name"], "Rasht")
+        self.assertIn("current", first_result)
+        self.assertIn("units", first_result)
+
+    def test_compare_weather_with_one_location(self):
+        response=self.client.post(self.url,{"locations": self.locations[:1]}, format="json")
+        self.assertEqual(response.status_code,status.HTTP_400_BAD_REQUEST)
+
+    def test_compare_weather_with_duplicate_locations(self):
+        duplicate_locations=[self.locations[0], self.locations[0]]
+        response=self.client.post(self.url, {"locations": duplicate_locations}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    
+@patch("weather.views.WeatherService.get_weather")
+def test_compare_weather_partial_failure(self, mock_get_weather):
+    def get_weather_side_effect(latitude, longitude):
+        if longitude == -0.1276:
+            raise RuntimeError("Weather service is unavailable.")
+        weather = self.mock_weather.copy()
+        weather["location"]={
+                "latitude": latitude,
+                "longitude": longitude,
+                "timezone": "Asia/Tehran",
+            }
+        return weather
+
+    mock_get_weather.side_effect=get_weather_side_effect
+    response=self.client.post(self.url, {"locations": self.locations}, format="json")
+
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    results = response.data["results"]
+    self.assertEqual(len(results), 2)
+    self.assertIn("current", results[0])
+    self.assertIn("error", results[1])
+    self.assertEqual(results[1]["location"]["name"], "London")
