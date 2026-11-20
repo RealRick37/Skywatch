@@ -8,7 +8,7 @@ import DailyForecast from "./components/weather/DailyForecast";
 import WeatherDetails from './components/weather/WeatherDetails';
 import SkyBackground from "./components/background/SkyBackground";
 import Favorites from "./components/favorites/Favorites";
-import { getWeather, searchCity, reverseGeocode, getFavoriteWeather, addFavorite } from "./services/weather";
+import { getWeather, searchCity, reverseGeocode, getFavoriteWeather, addFavorite, compareWeather } from "./services/weather";
 import { getWeatherCondition, isNight } from "./utils/weather";
 import AuthPage from "./components/auth/AuthPage";
 import { getCurrentUser } from "./services/auth";
@@ -73,6 +73,14 @@ function WeatherApp() {
 
   const condition = skyOverride ?? getWeatherCondition(weather);
   const night = nightOverride ?? isNight(weather);
+
+
+  const [comparisonLocations, setComparisonLocations] = useState([]);
+  const [comparisonResults, setComparisonResults] = useState([]);
+  const [comparisonLoading, setComparisonLoading] = useState(false);
+  const [comparisonError, setComparisonError] = useState(null);
+
+
 
   const handleAuthenticated = async () => {
     const response = await getCurrentUser();
@@ -333,6 +341,54 @@ function WeatherApp() {
         isSameLocation(favorite, weather.location)
       )
     : false;
+  
+
+  const handleAddComparisonCity = (city) => {
+    setComparisonError(null);
+    setComparisonResults([]);
+
+    setComparisonLocations((previous) => {
+      const alreadyAdded = previous.some((location) =>
+        isSameLocation(location, city)
+      );
+
+      if (alreadyAdded || previous.length >= 4) {
+        return previous;
+      }
+
+      return [...previous, city];
+    });
+  };
+
+  const handleRemoveComparisonCity = (city) => {
+    setComparisonLocations((previous) =>
+      previous.filter((location) => !isSameLocation(location, city))
+    );
+
+    setComparisonResults([]);
+    setComparisonError(null);
+  };
+
+  const handleCompareWeather = async () => {
+    if (comparisonLocations.length < 2 || comparisonLoading) return;
+
+    setComparisonLoading(true);
+    setComparisonError(null);
+
+    try {
+      const response = await compareWeather(comparisonLocations);
+      setComparisonResults(response.data.results ?? []);
+    } catch (err) {
+      console.error("Weather comparison error:", err);
+      setComparisonError(
+        err.response?.data?.detail ||
+        "Could not compare weather. Please try again."
+      );
+    } finally {
+      setComparisonLoading(false);
+    }
+  };
+
 
   return (
     <>
