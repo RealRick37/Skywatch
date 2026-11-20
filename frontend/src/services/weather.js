@@ -39,3 +39,8 @@ export const deleteFavorite = (id) => {
 export const addFavorite = (location) => {
   return api.post("weather/favorites/", location);
 };
+
+
+export const compareWeather = (locations) => {
+  return api.post("weather/compare/", { locations });
+};
