@@ -1,4 +1,4 @@
-import {CloudSun, Map, Menu, Settings, Star, X} from "lucide-react";
+import {CloudSun, Map, Menu, Settings, Star, X, GitCompareArrows} from "lucide-react";
 
 function Sidebar({ isOpen, onToggle, activeView, onNavigate }) {
   return (
@@ -29,6 +29,14 @@ function Sidebar({ isOpen, onToggle, activeView, onNavigate }) {
           active={activeView === "favorites"}
           isOpen={isOpen}
           onClick={() => onNavigate("favorites")}
+        />
+
+        <SidebarItem
+          icon={<GitCompareArrows />}
+          label="Compare"
+          active={activeView === "compare"}
+          isOpen={isOpen}
+          onClick={() => onNavigate("compare")}
         />
 
         <SidebarItem
