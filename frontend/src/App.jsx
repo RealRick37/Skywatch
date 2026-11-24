@@ -17,6 +17,8 @@ import { Routes, Route } from "react-router-dom";
 import NotFound from "./components/errors/NotFound";
 import WeatherState from "./components/common/WeatherState";
 import LoadingScreen from "./components/common/LoadingScreen";
+import Compare from './components/compare/compare';
+
 
 const COORD_TOLERANCE = 0.01;
 
@@ -344,20 +346,15 @@ function WeatherApp() {
   
 
   const handleAddComparisonCity = (city) => {
-    setComparisonError(null);
+    const alreadyAdded = comparisonLocations.some((location) =>
+      isSameLocation(location, city)
+    );
+
+    if (alreadyAdded || comparisonLocations.length >= 4) return;
+
+    setComparisonLocations((previous) => [...previous, city]);
     setComparisonResults([]);
-
-    setComparisonLocations((previous) => {
-      const alreadyAdded = previous.some((location) =>
-        isSameLocation(location, city)
-      );
-
-      if (alreadyAdded || previous.length >= 4) {
-        return previous;
-      }
-
-      return [...previous, city];
-    });
+    setComparisonError(null);
   };
 
   const handleRemoveComparisonCity = (city) => {
@@ -434,6 +431,16 @@ function WeatherApp() {
                 setActiveView("today");
                 loadWeather(city.latitude, city.longitude, city);
               }}
+            />
+          ) : activeView === "compare" ? (
+            <Compare
+              locations={comparisonLocations}
+              results={comparisonResults}
+              loading={comparisonLoading}
+              error={comparisonError}
+              onAdd={handleAddComparisonCity}
+              onRemove={handleRemoveComparisonCity}
+              onCompare={handleCompareWeather}
             />
           ) : activeView === "map" ? (
             <MapPicker
