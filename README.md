@@ -7,7 +7,7 @@
 
   A modern weather application built with Django and React, designed to make checking the weather intuitive, informative, and visually engaging.
 
-  ![Version](https://img.shields.io/badge/version-1.1.0-blue)
+  ![Version](https://img.shields.io/badge/version-1.2.0-blue)
   ![Python](https://img.shields.io/badge/Python-3.14+-3776AB?logo=python&logoColor=white)
   ![Django](https://img.shields.io/badge/Django-6.x-092E20?logo=django&logoColor=white)
   ![React](https://img.shields.io/badge/React-Vite-61DAFB?logo=react&logoColor=black)
@@ -60,10 +60,16 @@ Because apparently, even checking the weather deserves a proper release announce
 ![Skywatch Map Picker](docs/images/map-picker.webp)
 
 
+### Weather Comparison
+
+![Skywatch Weather Comparison](docs/images/compare-2.webp)
+
+
 ## Features
 
 - **City Search** — Search for cities and explore weather conditions at different locations.
 - **Current Weather** — Get detailed weather information, including temperature, feels-like temperature, humidity, wind speed, atmospheric pressure, visibility, UV index, and precipitation.
+- **Weather Comparison** — Compare current weather conditions across 2–4 cities, with individual weather cards and detailed weather metrics.
 - **Manual Weather Refresh** — Refresh weather data on demand, with loading indicators, last updated timestamps, and graceful error handling that preserves previously loaded data.
 - **Hourly Forecast** — Check upcoming temperatures, weather conditions, precipitation probability, and wind speed.
 - **7-Day Forecast** — Plan ahead with daily high and low temperatures, weather conditions, precipitation, and maximum wind speed.
@@ -210,7 +216,8 @@ Skywatch/
 **Skywatch isn't done yet.**
 
 ~~Version 1.0.0 is just the beginning.~~
-Version 1.1.0 is here, and the journey continues.
+~~Version 1.1.0 is here, and the journey continues.~~
+Version 1.2.0 brings Weather Comparison to Skywatch as it continues to grow.
 
 More features, improvements, and updates are on the horizon.
 
